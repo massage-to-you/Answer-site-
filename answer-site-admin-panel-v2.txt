@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060913">
+<title>Admin Panel | Answer Site</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--bg:#060913;--panel:#0d1324;--panel2:#131c36;--blue:#2563eb;--cyan:#38bdf8;--line:rgba(56,189,248,.18);--text:#f8fafc;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--amber:#f59e0b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,rgba(37,99,235,.14),transparent 30%),var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:11px;color:var(--muted);line-height:1.6}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:22px}.login-card{width:100%;max-width:430px;background:linear-gradient(155deg,#131c36,#0d1324);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:0 24px 70px #0008;position:relative;overflow:hidden}.login-card:before{content:"";position:absolute;top:0;left:12%;width:76%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),transparent)}
+.brand{text-align:center;font-size:21px;font-weight:800;letter-spacing:.5px}.brand i{color:var(--cyan);margin-right:8px}.login-sub{text-align:center;color:var(--muted);font-size:12px;margin:9px 0 24px}
+.field{margin:14px 0}.field label{display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:7px}.field input,.field select,.field textarea,.search{width:100%;background:#080e1d;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);outline:none}.field input:focus,.field textarea:focus,.field select:focus,.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #38bdf81c}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800;color:white;background:linear-gradient(100deg,#1d4ed8,#0284c7);transition:.2s}.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}.btn.full{width:100%;margin-top:8px}.btn.secondary{background:#17233e;border:1px solid var(--line);color:#dbeafe}.btn.danger{background:#7f1d1d}.btn.success{background:#166534}.btn.warning{background:#92400e}.status{font-size:12px;margin-top:12px;line-height:1.5}.status.error{color:#fecaca}.status.ok{color:#bbf7d0}.preview-note{margin-top:18px;padding:12px;border:1px solid #f59e0b55;background:#78350f20;border-radius:10px;color:#fde68a;font-size:11px;line-height:1.6}
+.topbar{height:68px;position:sticky;top:0;z-index:10;background:#080e1deF;backdrop-filter:blur(15px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px}.top-brand{font-weight:800;font-size:18px}.top-brand i{color:var(--cyan);margin-right:8px}.top-actions{display:flex;gap:9px;align-items:center}.pill{font-size:10px;padding:6px 9px;border-radius:99px;background:#78350f44;color:#fcd34d;border:1px solid #f59e0b55}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 68px)}.sidebar{padding:18px 13px;border-right:1px solid var(--line);background:#080e1d88}.nav-label{font-size:9px;color:#64748b;font-weight:800;letter-spacing:1.3px;padding:12px 12px 7px}.nav-btn{width:100%;display:flex;align-items:center;gap:11px;border:1px solid transparent;background:transparent;color:#aebbd0;padding:11px 12px;border-radius:10px;text-align:left;font-size:12px;font-weight:700;margin:3px 0}.nav-btn i{width:17px;color:#7dd3fc}.nav-btn:hover,.nav-btn.active{background:#1d4ed822;border-color:#38bdf833;color:white}.nav-btn.active i{color:var(--cyan)}
+main{padding:24px;max-width:1500px;width:100%;margin:auto}.page-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:20px}.page-head h1{font-size:22px;margin:0}.page-head p{font-size:11px;color:var(--muted);margin:6px 0 0}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:18px}.stat,.panel{background:linear-gradient(145deg,#111a30,#0c1324);border:1px solid var(--line);border-radius:15px;padding:16px}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;font-weight:700}.stat-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#1d4ed833;color:#7dd3fc}.stat-num{font-size:25px;font-weight:800;margin-top:12px}.stat-foot{font-size:10px;color:var(--muted);margin-top:4px}.content-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}.panel h3{font-size:13px;margin:0 0 14px}.panel-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.panel-head h3{margin:0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #ffffff0d;font-size:10px;vertical-align:middle}th{color:#94a3b8;font-weight:800;letter-spacing:.4px}td{color:#dbeafe}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:800;background:#1e3a8a55;color:#bfdbfe}.tag.green{background:#14532d66;color:#bbf7d0}.tag.red{background:#7f1d1d66;color:#fecaca}.tag.yellow{background:#78350f66;color:#fde68a}.empty{text-align:center;padding:28px;color:#64748b;font-size:11px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.toolbar .search{max-width:310px;padding:10px 12px;font-size:11px}.toolbar select{background:#080e1d;border:1px solid var(--line);color:#dbeafe;border-radius:9px;padding:9px;font-size:11px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid .field{margin:0}.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.notice{padding:12px;border-radius:10px;background:#0c2840;border:1px solid #38bdf833;color:#bae6fd;font-size:11px;line-height:1.6;margin-bottom:14px}.warning-box{padding:12px;border-radius:10px;background:#78350f20;border:1px solid #f59e0b55;color:#fde68a;font-size:11px;line-height:1.6;margin-bottom:14px}
+.section{display:none}.section.active{display:block}.mobile-menu{display:none}.footer-note{font-size:10px;color:#64748b;text-align:center;padding:22px 0}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;overflow:auto;gap:5px;border-right:0;border-bottom:1px solid var(--line);padding:9px}.nav-label{display:none}.nav-btn{white-space:nowrap;width:auto;min-width:max-content;padding:9px 11px}.nav-btn span{display:inline}.nav-btn i{width:auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}main{padding:17px}}
+@media(max-width:520px){.topbar{padding:0 13px}.top-brand{font-size:15px}.top-actions .pill{display:none}.stats{gap:9px}.stat{padding:12px}.stat-num{font-size:21px}.page-head h1{font-size:19px}.form-grid{grid-template-columns:1fr}.login-card{padding:24px 19px}main{padding:13px}}
+</style>
+</head>
+<body>
+<!-- ADMIN LOGIN -->
+<div id="loginView" class="login-wrap">
+  <section class="login-card">
+    <div class="brand"><i class="fa-solid fa-shield-halved"></i>ANSWER SITE</div>
+    <p class="login-sub">Administrator Secure Login</p>
+    <form id="adminLoginForm">
+      <div class="field"><label for="adminEmail">ADMIN EMAIL</label><input id="adminEmail" type="email" placeholder="Enter admin email" autocomplete="username" required></div>
+      <div class="field"><label for="adminPassword">PASSWORD</label><input id="adminPassword" type="password" placeholder="Enter password" autocomplete="current-password" required></div>
+      <button class="btn full" type="submit" id="adminLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> LOGIN TO ADMIN</button>
+      <div id="loginStatus" class="status" role="status"></div>
+    </form>
+    <button class="btn secondary full" type="button" id="previewBtn">PREVIEW DASHBOARD (DESIGN ONLY)</button>
+    <div class="preview-note"><b>Firebase setup pending:</b> This is a UI scaffold. Real admin authentication and database actions are not active yet. Preview mode does not secure or save admin changes to Firebase.</div>
+  </section>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="dashboardView" class="hidden">
+<header class="topbar">
+  <div class="top-brand"><i class="fa-solid fa-layer-group"></i>ANSWER SITE <span class="muted" style="font-size:10px">/ ADMIN</span></div>
+  <div class="top-actions"><span class="pill" id="modePill">PREVIEW MODE</span><button class="btn secondary" id="logoutBtn"><i class="fa-solid fa-power-off"></i> Logout</button></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="nav-label">MAIN MENU</div>
+  <button class="nav-btn active" data-section="overview"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></button>
+  <button class="nav-btn" data-section="users"><i class="fa-solid fa-users"></i><span>User Management</span></button>
+  <button class="nav-btn" data-section="jobs"><i class="fa-solid fa-list-check"></i><span>Job Management</span></button>
+  <button class="nav-btn" data-section="challenges"><i class="fa-solid fa-shield-halved"></i><span>Challenges</span></button>
+  <button class="nav-btn" data-section="payments"><i class="fa-solid fa-wallet"></i><span>Payment Settings</span></button>
+  <button class="nav-btn" data-section="website"><i class="fa-solid fa-sliders"></i><span>Website Settings</span></button>
+  <button class="nav-btn" data-section="logs"><i class="fa-solid fa-clock-rotate-left"></i><span>Activity Logs</span></button>
+  <div class="nav-label">SYSTEM</div>
+  <button class="nav-btn" data-section="firebase"><i class="fa-solid fa-fire"></i><span>Firebase Setup</span></button>
+</aside>
+<main>
+<section id="section-overview" class="section active">
+  <div class="page-head"><div><h1>Dashboard Overview</h1><p>Monitor users, jobs, reports and website activity.</p></div><span class="tag yellow">PREVIEW DATA</span></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-top"><span>Total Users</span><span class="stat-icon"><i class="fa-solid fa-users"></i></span></div><div class="stat-num" id="totalUsers">—</div><div class="stat-foot">Registered accounts</div></div>
+    <div class="stat"><div class="stat-top"><span>Active Users</span><span class="stat-icon"><i class="fa-solid fa-user-check"></i></span></div><div class="stat-num" id="activeUsers">—</div><div class="stat-foot">Accounts enabled</div></div>
+    <div class="stat"><div class="stat-top"><span>Total Jobs</span><span class="stat-icon"><i class="fa-solid fa-briefcase"></i></span></div><div class="stat-num" id="totalJobs">—</div><div class="stat-foot">Currently listed answers</div></div>
+    <div class="stat"><div class="stat-top"><span>Pending Challenges</span><span class="stat-icon"><i class="fa-solid fa-flag"></i></span></div><div class="stat-num" id="pendingChallenges">—</div><div class="stat-foot">Wrong-answer reviews</div></div>
+    <div class="stat"><div class="stat-top"><span>Deleted Jobs</span><span class="stat-icon"><i class="fa-solid fa-trash"></i></span></div><div class="stat-num" id="deletedJobs">—</div><div class="stat-foot">Manual + automatic</div></div>
+    <div class="stat"><div class="stat-top"><span>Today's Activity</span><span class="stat-icon"><i class="fa-solid fa-bolt"></i></span></div><div class="stat-num" id="todayActivity">—</div><div class="stat-foot">Events recorded today</div></div>
+  </div>
+  <div class="content-grid">
+    <div class="panel"><div class="panel-head"><h3>Recent Job Submissions</h3><button class="btn secondary" data-go="jobs">View All</button></div><div class="table-wrap"><table><thead><tr><th>JOB ID</th><th>JOB NAME</th><th>SUBMITTER UID</th><th>DATE</th></tr></thead><tbody id="recentJobsBody"></tbody></table></div></div>
+    <div class="panel"><h3>Admin Quick Actions</h3><div class="form-actions" style="margin-top:0"><button class="btn" data-go="users">Manage Users</button><button class="btn secondary" data-go="challenges">Review Challenges</button><button class="btn secondary" data-go="payments">Edit Payment Numbers</button><button class="btn danger" data-go="jobs">Delete a Job</button></div><p class="small" style="margin-top:15px">Quick actions open the related management section. Live actions will be enabled after Firebase and secure backend setup.</p></div>
+  </div>
+</section>
+
+<section id="section-users" class="section">
+  <div class="page-head"><div><h1>User Management</h1><p>Create and manage member access, validity and account status.</p></div></div>
+  <div class="warning-box">User creation, password reset and status changes must be handled by a trusted backend/Admin SDK. Never store plain-text passwords in this page or in localStorage.</div>
+  <div class="panel">
+    <div class="panel-head"><h3>Users</h3><button class="btn" id="addUserBtn">+ Add User (UI)</button></div>
+    <div class="toolbar"><input class="search" id="userSearch" placeholder="Search by UID or name"><select id="userFilter"><option value="all">All Status</option><option value="active">Active</option><option value="blocked">Blocked</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>UID</th><th>NAME</th><th>STATUS</th><th>VALIDITY</th><th>SUBMITTED</th><th>DELETED</th><th>SUCCESS RATE</th><th>ACTION</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    <div class="empty" id="usersEmpty">No user records found. Connect Firebase to load users.</div>
+  </div>
+</section>
+
+<section id="section-jobs" class="section">
+  <div class="page-head"><div><h1>Job Management</h1><p>Search, inspect and manually remove submitted jobs.</p></div></div>
+  <div class="panel"><div class="toolbar"><input class="search" id="jobSearch" placeholder="Search Job ID or Job Name"><button class="btn secondary" id="refreshJobs">Refresh</button></div>
+  <div class="table-wrap"><table><thead><tr><th>JOB ID</th><th>JOB NAME</th><th>ANSWER</th><th>SUBMITTER UID</th><th>DATE</th><th>ACTION</th></tr></thead><tbody id="jobsBody"></tbody></table></div><div class="empty" id="jobsEmpty">No job data found in this browser. Firebase sync is not connected.</div></div>
+</section>
+
+<section id="section-challenges" class="section">
+  <div class="page-head"><div><h1>Wrong Answer Challenges</h1><p>Review user-submitted corrections before applying any change.</p></div></div>
+  <div class="notice">Accepting a challenge should update the original job only after an admin review. This scaffold displays challenge records stored in this browser; it does not sync across devices.</div>
+  <div class="panel"><div class="toolbar"><input class="search" id="challengeSearch" placeholder="Search Job ID or UID"><select id="challengeFilter"><option value="all">All Challenges</option><option value="PENDING">Pending</option><option value="ACCEPTED">Accepted</option><option value="REJECTED">Rejected</option></select></div>
+  <div class="table-wrap"><table><thead><tr><th>JOB ID</th><th>SUBMITTER UID</th><th>ORIGINAL ANSWER</th><th>SUGGESTED ANSWER</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody id="challengesBody"></tbody></table></div><div class="empty" id="challengesEmpty">No challenge records found.</div></div>
+</section>
+
+<section id="section-payments" class="section">
+  <div class="page-head"><div><h1>Payment Settings</h1><p>Set the admin receiving numbers shown in Renew Account.</p></div></div>
+  <div class="notice">These settings use the same local browser key as the Home Page scaffold: <b>adminSiteConfig</b>. Cross-device updates require Firebase/Firestore.</div>
+  <div class="panel"><h3>Admin Receiving Numbers</h3><div class="form-grid">
+    <div class="field"><label>bKash Number</label><input id="payBkash" placeholder="01XXXXXXXXX" inputmode="tel"></div>
+    <div class="field"><label>Nagad Number</label><input id="payNagad" placeholder="01XXXXXXXXX" inputmode="tel"></div>
+    <div class="field"><label>Rocket Number</label><input id="payRocket" placeholder="01XXXXXXXXX" inputmode="tel"></div>
+  </div><div class="form-actions"><button class="btn" id="savePayments">Save Payment Numbers</button></div><p class="small" id="paymentStatus"></p></div>
+</section>
+
+<section id="section-website" class="section">
+  <div class="page-head"><div><h1>Website Settings</h1><p>Manage announcements, contact details and form controls.</p></div></div>
+  <div class="panel"><h3>Website Announcement</h3><div class="field"><label>Moving Headline</label><textarea id="headlineText" rows="3" placeholder="Enter website announcement"></textarea></div><div class="field"><label>Admin WhatsApp Number</label><input id="adminWhatsapp" placeholder="8801XXXXXXXXX"></div><div class="field"><label>Admin Telegram Username</label><input id="adminTelegram" placeholder="@username"></div><div class="form-actions"><button class="btn" id="saveWebsite">Save Website Settings</button></div><p class="small" id="websiteStatus"></p></div>
+  <div class="panel" style="margin-top:14px"><h3>Post Answer Form Controls (planned)</h3><p class="small">Future controls: enable/disable Job ID, Job Name, Answer, Image Upload; set required/optional; set accepted image size and 16:9 crop requirement.</p><span class="tag yellow">Backend integration pending</span></div>
+</section>
+
+<section id="section-logs" class="section">
+  <div class="page-head"><div><h1>Activity & Deletion Logs</h1><p>Review submitted, challenged and deleted job activity.</p></div></div>
+  <div class="panel"><div class="toolbar"><select id="logFilter"><option value="all">All Events</option><option value="deleted">Deleted Jobs</option><option value="submitted">Submissions</option></select></div><div class="table-wrap"><table><thead><tr><th>EVENT</th><th>JOB ID</th><th>USER / ADMIN UID</th><th>REASON</th><th>DATE</th></tr></thead><tbody id="logsBody"></tbody></table></div><div class="empty" id="logsEmpty">No activity logs found.</div></div>
+</section>
+
+<section id="section-firebase" class="section">
+  <div class="page-head"><div><h1>Firebase Setup</h1><p>Configuration placeholders prepared for later connection.</p></div></div>
+  <div class="warning-box"><b>Important:</b> Firebase client config is not enough to secure an admin panel. Later setup must include Firebase Authentication, Firestore rules, admin role/custom claims and trusted Cloud Functions or server endpoints for privileged actions.</div>
+  <div class="panel"><h3>Firebase Web App Configuration</h3><div class="field"><label>API KEY</label><input value="YOUR_FIREBASE_API_KEY" readonly></div><div class="field"><label>AUTH DOMAIN</label><input value="YOUR_PROJECT_ID.firebaseapp.com" readonly></div><div class="field"><label>PROJECT ID</label><input value="YOUR_PROJECT_ID" readonly></div><div class="field"><label>APP ID</label><input value="YOUR_FIREBASE_APP_ID" readonly></div><span class="tag yellow">PLACEHOLDERS ONLY — NOT CONNECTED</span></div>
+  <div class="panel" style="margin-top:14px"><h3>Planned Firebase Services</h3><ul class="small" style="line-height:2.1"><li>Firebase Authentication — Admin and user sign-in</li><li>Cloud Firestore — Users, jobs, challenges, payment settings and logs</li><li>Cloud Functions — Secure user provisioning, role checks and admin-only operations</li><li>Firestore Security Rules — prevent users from changing admin data</li><li>Firebase App Check — reduce unauthorized client access</li></ul></div>
+</section>
+<div class="footer-note">Answer Site Admin Panel • UI scaffold • Firebase connection pending</div>
+</main></div></div>
+
+<script>
+/*
+  ANSWER SITE ADMIN PANEL — FIREBASE-READY SCAFFOLD
+
+  1) Replace placeholders only when the correct project is ready.
+  2) Enable Firebase Authentication and Firestore.
+  3) Assign admin role securely using custom claims / trusted backend.
+  4) Do NOT create admin privileges based only on a value stored in browser localStorage.
+  5) User creation/password reset and all privileged mutations must use Cloud Functions
+     or a trusted server using Firebase Admin SDK.
+  6) This file currently runs in PREVIEW MODE. No real authentication is performed.
+
+  Shared Home Page localStorage keys (same browser/origin only):
+  adminAnswersDB, adminSiteConfig, answerSiteSubmissionLedger,
+  answerSiteDeletionLog, answerSiteChallenges, answerSiteUsedJobIds
+*/
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_APP_ID"
+};
+const FIREBASE_ENABLED = false; // Set true only after Firebase SDK + real config + rules are installed.
+const ADMIN_LOGIN_API_URL = ""; // Optional trusted admin login endpoint if using UID-based login.
+const $ = id => document.getElementById(id);
+const read = (key, fallback) => { try { const v=JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; } };
+const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+let previewMode = true;
+
+function showDashboard(preview=true){
+  previewMode=preview;
+  $("loginView").classList.add("hidden");
+  $("dashboardView").classList.remove("hidden");
+  $("modePill").textContent=preview ? "PREVIEW MODE" : "CONNECTED MODE";
+  $("modePill").className=preview ? "pill" : "tag green";
+  refreshAll();
+}
+function showLogin(){ $("dashboardView").classList.add("hidden"); $("loginView").classList.remove("hidden"); }
+$("previewBtn").addEventListener("click",()=>showDashboard(true));
+$("logoutBtn").addEventListener("click",showLogin);
+$("adminLoginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const status=$("loginStatus");
+  if(!FIREBASE_ENABLED && !ADMIN_LOGIN_API_URL){
+    status.className="status error";
+    status.textContent="Firebase/Admin backend is not configured yet. Use Preview Dashboard to inspect the layout. Real admin login is not active.";
+    return;
+  }
+  status.className="status error";
+  status.textContent="Authentication adapter is reserved for the Firebase integration step. Do not enable this page until secure admin-role verification is implemented.";
+});
+function go(section){
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
+  document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id==="section-"+section));
+  const title=document.querySelector("#section-"+section+" h1");
+  if(title) window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>go(b.dataset.section)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+function getJobs(){return read("adminAnswersDB",[]).map(x=>({...x}));}
+function getChallenges(){return read("answerSiteChallenges",[]);}
+function getDeletions(){return read("answerSiteDeletionLog",[]);}
+function getLedger(){return read("answerSiteSubmissionLedger",[]);}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function dateText(v){if(!v)return "—";const d=new Date(v);return isNaN(d)?"—":d.toLocaleString();}
+function refreshAll(){renderOverview();renderJobs();renderChallenges();renderLogs();loadSettings();}
+function renderOverview(){
+ const jobs=getJobs(), challenges=getChallenges(), deletions=getDeletions(), ledger=getLedger();
+ $("totalJobs").textContent=jobs.length;
+ $("pendingChallenges").textContent=challenges.filter(x=>(x.status||"PENDING")==="PENDING").length;
+ $("deletedJobs").textContent=deletions.length;
+ $("totalUsers").textContent="—";$("activeUsers").textContent="—";
+ const today=new Date().toDateString();
+ $("todayActivity").textContent=ledger.filter(x=>x.createdAt&&new Date(x.createdAt).toDateString()===today).length+deletions.filter(x=>x.deletedAt&&new Date(x.deletedAt).toDateString()===today).length;
+ $("recentJobsBody").innerHTML=jobs.slice(-5).reverse().map(j=>`<tr><td>${esc(j.jobId||j.id||"—")}</td><td>${esc(j.jobName||j.name||"—")}</td><td>${esc(j.uid||j.submitterUID||"—")}</td><td>${esc(dateText(j.createdAt||j.timestamp))}</td></tr>`).join("");
+ if(!jobs.length)$("recentJobsBody").innerHTML='<tr><td colspan="4" class="empty">No local job records.</td></tr>';
+}
+function renderJobs(){
+ const q=($("jobSearch").value||"").toLowerCase(), jobs=getJobs().filter(j=>JSON.stringify(j).toLowerCase().includes(q));
+ $("jobsBody").innerHTML=jobs.map(j=>`<tr><td>${esc(j.jobId||j.id||"—")}</td><td>${esc(j.jobName||j.name||"—")}</td><td>${esc(j.answer||"—")}</td><td>${esc(j.uid||j.submitterUID||"—")}</td><td>${esc(dateText(j.createdAt||j.timestamp))}</td><td><button class="btn danger" data-delete-job="${esc(j.jobId||j.id||"")}" style="padding:7px 9px;font-size:9px">Delete</button></td></tr>`).join("");
+ $("jobsEmpty").classList.toggle("hidden",jobs.length>0);
+ document.querySelectorAll("[data-delete-job]").forEach(b=>b.addEventListener("click",()=>deleteJob(b.dataset.deleteJob)));
+}
+function deleteJob(id){
+ if(previewMode){alert("Preview mode: deletion is disabled until secure Firebase admin authorization is connected.");return;}
+ const jobs=getJobs(), target=jobs.find(j=>String(j.jobId||j.id)===String(id));if(!target)return;
+ if(!confirm("Delete Job ID "+id+"?"))return;
+ const updated=jobs.filter(j=>String(j.jobId||j.id)!==String(id));write("adminAnswersDB",updated);
+ const logs=getDeletions();logs.push({jobId:id,uid:target.uid||target.submitterUID||"UNKNOWN",reason:"ADMIN_DELETE",deletedAt:new Date().toISOString(),adminUID:"ADMIN"});write("answerSiteDeletionLog",logs);
+ refreshAll();
+}
+function renderChallenges(){
+ const q=($("challengeSearch").value||"").toLowerCase(), f=$("challengeFilter").value;
+ const items=getChallenges().filter(c=>JSON.stringify(c).toLowerCase().includes(q)&&(f==="all"||(c.status||"PENDING")===f));
+ $("challengesBody").innerHTML=items.map(c=>`<tr><td>${esc(c.jobId||"—")}</td><td>${esc(c.uid||c.submitterUID||"—")}</td><td>${esc(c.originalAnswer||"—")}</td><td>${esc(c.proposedAnswer||c.correctAnswer||"—")}</td><td><span class="tag ${(c.status||"PENDING")==="PENDING"?"yellow":(c.status==="ACCEPTED"?"green":"red")}">${esc(c.status||"PENDING")}</span></td><td>${(c.status||"PENDING")==="PENDING"?`<button class="btn success" data-challenge="${esc(c.challengeId||c.id||"")}" data-status="ACCEPTED" style="padding:6px;font-size:9px">Accept</button> <button class="btn danger" data-challenge="${esc(c.challengeId||c.id||"")}" data-status="REJECTED" style="padding:6px;font-size:9px">Reject</button>`:"—"}</td></tr>`).join("");
+ $("challengesEmpty").classList.toggle("hidden",items.length>0);
+ document.querySelectorAll("[data-challenge]").forEach(b=>b.addEventListener("click",()=>reviewChallenge(b.dataset.challenge,b.dataset.status)));
+}
+function reviewChallenge(id,status){
+ if(previewMode){alert("Preview mode: challenge review is disabled until Firebase admin authorization is connected.");return;}
+ const list=getChallenges(), item=list.find(c=>String(c.challengeId||c.id)===String(id));if(!item)return;
+ item.status=status;item.reviewedAt=new Date().toISOString();write("answerSiteChallenges",list);renderChallenges();renderOverview();
+}
+function renderLogs(){
+ const filter=$("logFilter").value, dels=getDeletions(), ledger=getLedger();
+ let rows=[...dels.map(x=>({event:"DELETED",jobId:x.jobId,uid:x.uid||x.adminUID,reason:x.reason,date:x.deletedAt})),...ledger.map(x=>({event:"SUBMITTED",jobId:x.jobId,uid:x.uid,reason:"NEW_SUBMISSION",date:x.createdAt}))];
+ if(filter==="deleted")rows=rows.filter(x=>x.event==="DELETED");if(filter==="submitted")rows=rows.filter(x=>x.event==="SUBMITTED");
+ rows.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+ $("logsBody").innerHTML=rows.map(x=>`<tr><td><span class="tag ${x.event==="DELETED"?"red":"green"}">${x.event}</span></td><td>${esc(x.jobId||"—")}</td><td>${esc(x.uid||"—")}</td><td>${esc(x.reason||"—")}</td><td>${esc(dateText(x.date))}</td></tr>`).join("");
+ $("logsEmpty").classList.toggle("hidden",rows.length>0);
+}
+function loadSettings(){
+ const c=read("adminSiteConfig",{});
+ const p=c.paymentNumbers||{};
+ $("payBkash").value=p.bkash||"";$("payNagad").value=p.nagad||"";$("payRocket").value=p.rocket||"";
+ $("headlineText").value=c.headline||c.announcement||"";
+ $("adminWhatsapp").value=c.adminWhatsapp||"";$("adminTelegram").value=c.adminTelegram||"";
+}
+$("savePayments").addEventListener("click",()=>{
+ if(previewMode){$("paymentStatus").textContent="Preview mode: saving is disabled until secure admin access is connected.";return;}
+ const c=read("adminSiteConfig",{});c.paymentNumbers={...(c.paymentNumbers||{}),bkash:$("payBkash").value.trim(),nagad:$("payNagad").value.trim(),rocket:$("payRocket").value.trim()};write("adminSiteConfig",c);$("paymentStatus").textContent="Saved in this browser only. Firebase sync is not connected.";
+});
+$("saveWebsite").addEventListener("click",()=>{
+ if(previewMode){$("websiteStatus").textContent="Preview mode: saving is disabled until secure admin access is connected.";return;}
+ const c=read("adminSiteConfig",{});c.headline=$("headlineText").value.trim();c.adminWhatsapp=$("adminWhatsapp").value.trim();c.adminTelegram=$("adminTelegram").value.trim();write("adminSiteConfig",c);$("websiteStatus").textContent="Saved in this browser only. Firebase sync is not connected.";
+});
+["jobSearch","challengeSearch","challengeFilter","logFilter"].forEach(id=>$(id).addEventListener("input",()=>{if(id==="jobSearch")renderJobs();if(id==="challengeSearch"||id==="challengeFilter")renderChallenges();if(id==="logFilter")renderLogs();}));
+$("refreshJobs").addEventListener("click",refreshAll);
+$("userSearch").addEventListener("input",()=>{ $("usersEmpty").textContent="User records will appear after Firebase integration."; });
+$("userFilter").addEventListener("change",()=>{ $("usersEmpty").textContent="User records will appear after Firebase integration."; });
+$("addUserBtn").addEventListener("click",()=>alert("User provisioning will be connected through a secure Cloud Function. Do not create accounts by saving passwords in browser storage."));
+</script>
+</body>
+</html>

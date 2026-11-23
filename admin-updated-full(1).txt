@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060913">
+<title>Answer Site | Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--bg:#060913;--panel:#111a30;--cyan:#38bdf8;--line:rgba(56,189,248,.18);--text:#f8fafc;--muted:#94a3b8}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}.muted,.small{color:var(--muted)}.small{font-size:11px;line-height:1.6}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:100%;max-width:430px;background:linear-gradient(155deg,#131c36,#0d1324);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 20px 60px #0008}
+.brand{text-align:center;font-size:21px;font-weight:800}.brand i,.top-brand i{color:var(--cyan);margin-right:8px}.login-sub{text-align:center;color:var(--muted);font-size:12px;margin:8px 0 22px}
+.field{margin:13px 0}.field label{display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:7px}.field input,.field select,.field textarea,.search{width:100%;background:#080e1d;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);outline:none;min-width:0}
+.field input:focus,.field select:focus,.field textarea:focus,.search:focus{border-color:var(--cyan)}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;color:white;background:linear-gradient(100deg,#1d4ed8,#0284c7)}.btn.full{width:100%;margin-top:8px}.btn.secondary{background:#17233e;color:#dbeafe}.btn.danger{background:#7f1d1d}.btn.success{background:#166534}.btn:disabled{opacity:.55;cursor:wait}
+.status{font-size:12px;margin-top:12px;line-height:1.5}.status.error{color:#fecaca}.status.success{color:#86efac}
+.warning-box,.notice{padding:12px;border-radius:10px;font-size:11px;line-height:1.6;margin:14px 0}.warning-box{border:1px solid #f59e0b55;background:#78350f20;color:#fde68a}.notice{background:#0c2840;border:1px solid #38bdf833;color:#bae6fd}
+.topbar{min-height:66px;position:sticky;top:0;z-index:5;background:#080e1def;backdrop-filter:blur(12px);border-bottom:1px solid #ffffff14;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px}
+.top-brand{font-size:17px;font-weight:800}.top-actions{display:flex;align-items:center;gap:8px}.pill{font-size:10px;padding:6px 9px;border-radius:99px;background:#14532d44;color:#86efac;border:1px solid #22c55e55}
+.layout{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 66px)}.sidebar{padding:16px 12px;border-right:1px solid #ffffff14;background:#080e1d88;min-width:0}
+.nav-label{font-size:9px;color:#64748b;font-weight:800;letter-spacing:1.2px;padding:12px 10px 6px}.nav-btn{width:100%;display:flex;align-items:center;gap:10px;border:1px solid transparent;background:transparent;color:#aebbd0;padding:11px;border-radius:10px;text-align:left;font-size:12px;font-weight:700;margin:3px 0}.nav-btn i{width:17px;color:#7dd3fc}.nav-btn:hover,.nav-btn.active{background:#1d4ed822;color:white}
+main{padding:22px;max-width:1500px;width:100%;min-width:0;margin:auto}.page-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.page-head h1{font-size:21px;margin:0}.page-head p{font-size:11px;color:var(--muted);margin:6px 0 0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat,.panel{background:linear-gradient(145deg,#111a30,#0c1324);border:1px solid #ffffff14;border-radius:14px;padding:15px;min-width:0}
+.stat-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;font-weight:700}.stat-icon{width:33px;height:33px;border-radius:9px;display:grid;place-items:center;background:#1d4ed833;color:#7dd3fc}.stat-num{font-size:24px;font-weight:800;margin-top:11px}.stat-foot{font-size:10px;color:var(--muted);margin-top:4px}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:13px}.panel h3{font-size:13px;margin:0 0 13px}.panel-head{display:flex;justify-content:space-between;gap:9px;align-items:center;margin-bottom:12px}.panel-head h3{margin:0}
+.table-wrap{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #ffffff0d;font-size:10px;vertical-align:middle}th{color:#94a3b8}td{color:#dbeafe}
+.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:800;background:#1e3a8a55;color:#bfdbfe}.tag.yellow{background:#78350f66;color:#fde68a}.empty{text-align:center;padding:25px;color:#64748b;font-size:11px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar .search{max-width:310px;padding:10px;font-size:11px}.toolbar select{background:#080e1d;border:1px solid var(--line);color:#dbeafe;border-radius:9px;padding:9px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid .field{margin:0}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.section{display:none;width:100%;min-width:0}.section.active{display:block}.footer-note{font-size:10px;color:#64748b;text-align:center;padding:20px 0}
+.modal{position:fixed;inset:0;z-index:30;background:#020617df;display:none;place-items:center;padding:16px}.modal.open{display:grid}.modal-card{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:#111a30;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 24px 70px #000b}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.modal-head h2{font-size:18px;margin:0}
+.uid-link{border:0;background:transparent;color:#7dd3fc;text-decoration:underline;padding:0;font:inherit;font-weight:800}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;gap:5px;overflow-x:auto;border-right:0;border-bottom:1px solid #ffffff14;padding:8px}.nav-label{display:none}.nav-btn{width:auto;min-width:max-content;padding:9px 10px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}main{padding:15px}}
+@media(max-width:520px){.topbar{padding:9px 11px}.top-brand{font-size:13px}.top-actions .pill{display:none}main{padding:11px}.page-head{align-items:flex-start;flex-wrap:wrap}.page-head h1{font-size:18px}.stat,.panel{padding:11px}.stat-num{font-size:20px}.form-grid{grid-template-columns:1fr}.toolbar .search{max-width:100%;flex:1 1 100%}.login-card{padding:22px 18px}}
+</style>
+</head>
+<body>
+<div id="loginView" class="login-wrap"><section class="login-card">
+ <div class="brand"><i class="fa-solid fa-shield-halved"></i>ANSWER SITE</div><p class="login-sub">Administrator Secure Login</p>
+ <form id="adminLoginForm">
+  <div class="field"><label for="adminEmail">ADMIN EMAIL</label><input id="adminEmail" type="email" placeholder="admin001@answer-site.test" autocomplete="username" required></div>
+  <div class="field"><label for="adminPassword">PASSWORD</label><input id="adminPassword" type="password" placeholder="Enter password" autocomplete="current-password" required></div>
+  <button class="btn full" id="adminLoginButton" type="submit">LOGIN TO ADMIN</button><div id="loginStatus" class="status" role="status"></div>
+ </form><div class="warning-box"><b>Secure Admin Access:</b> Only the configured administrator account can open this panel.</div>
+</section></div>
+<div id="dashboardView" class="hidden">
+<header class="topbar"><div class="top-brand"><i class="fa-solid fa-layer-group"></i>ANSWER SITE <span class="muted" style="font-size:10px">/ ADMIN</span></div><div class="top-actions"><span class="pill">FIREBASE ADMIN</span><button class="btn secondary" id="logoutBtn">Logout</button></div></header>
+<div class="layout"><aside class="sidebar">
+ <div class="nav-label">MAIN MENU</div>
+ <button class="nav-btn active" data-section="overview"><i class="fa-solid fa-chart-pie"></i>Overview</button>
+ <button class="nav-btn" data-section="users"><i class="fa-solid fa-users"></i>User Management</button>
+ <button class="nav-btn" data-section="jobs"><i class="fa-solid fa-list-check"></i>Job Management</button>
+ <button class="nav-btn" data-section="firebase"><i class="fa-solid fa-fire"></i>Firebase Setup</button>
+</aside><main>
+<section id="section-overview" class="section active">
+ <div class="page-head"><div><h1>Dashboard Overview</h1><p>Monitor registered users and jobs.</p></div><span class="tag yellow">FIREBASE DATA</span></div>
+ <div class="stats">
+  <div class="stat"><div class="stat-top">Total Users <span class="stat-icon"><i class="fa-solid fa-users"></i></span></div><div class="stat-num" id="totalUsers">—</div><div class="stat-foot">Firestore user profiles</div></div>
+  <div class="stat"><div class="stat-top">Active Users <span class="stat-icon"><i class="fa-solid fa-user-check"></i></span></div><div class="stat-num" id="activeUsers">—</div><div class="stat-foot">Enabled accounts</div></div>
+  <div class="stat"><div class="stat-top">Total Jobs <span class="stat-icon"><i class="fa-solid fa-briefcase"></i></span></div><div class="stat-num" id="totalJobs">—</div><div class="stat-foot">Firestore jobs</div></div>
+ </div>
+ <div class="content-grid"><div class="panel"><div class="panel-head"><h3>Recent Jobs</h3><button class="btn secondary" data-go="jobs">View Jobs</button></div><div class="table-wrap"><table><thead><tr><th>JOB ID</th><th>JOB NAME</th><th>SUBMITTER</th></tr></thead><tbody id="recentJobsBody"></tbody></table></div></div>
+ <div class="panel"><h3>Quick Actions</h3><div class="form-actions"><button class="btn" data-go="users">Manage Users</button><button class="btn secondary" data-go="jobs">Manage Jobs</button></div><p class="small">Create user accounts, update profiles, activate or block users, and manage jobs.</p></div></div>
+</section>
+<section id="section-users" class="section">
+ <div class="page-head"><div><h1>User Management</h1><p>Create and manage login accounts.</p></div><button class="btn" id="addUserBtn"><i class="fa-solid fa-user-plus"></i> Add User</button></div>
+ <div class="notice">Create accounts here. The Login ID becomes the user's sign-in ID. Passwords are sent directly to Firebase Authentication and are never saved in Firestore or displayed in this panel.</div>
+ <div class="panel"><div class="panel-head"><h3>Users</h3><button class="btn secondary" id="refreshUsers">Refresh Users</button></div>
+ <div class="toolbar"><input class="search" id="userSearch" placeholder="Search Login ID or name"><select id="userFilter"><option value="all">All Status</option><option value="active">Active</option><option value="blocked">Blocked</option></select></div>
+ <div class="table-wrap"><table><thead><tr><th>LOGIN ID</th><th>NAME</th><th>STATUS</th><th>VALIDITY</th><th>SUBMITTED</th><th>SUCCESS RATE</th><th>ACTION</th></tr></thead><tbody id="usersBody"></tbody></table></div><div class="empty" id="usersEmpty">Loading users...</div></div>
+</section>
+<section id="section-jobs" class="section">
+ <div class="page-head"><div><h1>Job Management</h1><p>Search, add, edit and delete jobs.</p></div></div>
+ <div class="panel"><div class="toolbar"><input class="search" id="jobSearch" placeholder="Search Job ID or Job Name"><button class="btn" id="addJobBtn">+ Add Job</button><button class="btn secondary" id="refreshJobs">Refresh</button></div>
+ <div class="table-wrap"><table><thead><tr><th>JOB ID</th><th>JOB NAME</th><th>ANSWER</th><th>SUBMITTER</th><th>ACTION</th></tr></thead><tbody id="jobsBody"></tbody></table></div><div class="empty" id="jobsEmpty">Loading jobs...</div></div>
+</section>
+<section id="section-firebase" class="section"><div class="page-head"><div><h1>Firebase Setup</h1><p>Authentication and database information.</p></div></div><div class="warning-box"><b>Security:</b> Never place Firebase service-account keys in this HTML file.</div><div class="panel"><p class="small">PROJECT ID: answer-site</p><p class="small">AUTHENTICATION: Firebase Email/Password</p><p class="small">ADMIN UID: DEBuc9USNcULaH9BY1tXvbRJZYn1</p></div></section>
+<div class="footer-note">Answer Site Admin Panel • Firebase Authentication + Firestore</div>
+</main></div></div>
+
+<div class="modal" id="addUserModal" role="dialog" aria-modal="true" aria-labelledby="addUserTitle"><div class="modal-card">
+ <div class="modal-head"><h2 id="addUserTitle">Create New User</h2><button class="btn secondary" id="closeAddUserBtn" type="button">Close</button></div>
+ <form id="addUserForm">
+  <div class="form-grid">
+   <div class="field"><label for="newLoginId">LOGIN ID</label><input id="newLoginId" required minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" placeholder="Example: user001"></div>
+   <div class="field"><label for="newUserName">FULL NAME</label><input id="newUserName" required maxlength="80" placeholder="User name"></div>
+   <div class="field"><label for="newUserPassword">TEMPORARY PASSWORD</label><input id="newUserPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="At least 6 characters"></div>
+   <div class="field"><label for="newUserValidity">VALID UNTIL (OPTIONAL)</label><input id="newUserValidity" type="date"></div>
+  </div>
+  <p class="small">Login ID can use letters, numbers, dot, underscore and hyphen. The password must contain at least 6 characters.</p>
+  <button class="btn full" id="createUserBtn" type="submit">Create User Account</button><div id="addUserStatus" class="status" role="status"></div>
+ </form>
+</div></div>
+
+<div class="modal" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><div class="modal-card">
+ <div class="modal-head"><div><h2 id="profileTitle">User Profile</h2><p class="small" id="profileSubtitle"></p></div><button class="btn secondary" id="closeProfileBtn">Close</button></div>
+ <div class="form-grid">
+  <div class="field"><label>NAME</label><input id="editName"></div><div class="field"><label>VALID UNTIL</label><input id="editValidity" type="date"></div>
+  <div class="field"><label>SUBMITTED JOBS</label><input id="editSubmitted" type="number" min="0" step="1"></div><div class="field"><label>DELETED JOBS</label><input id="editDeleted" type="number" min="0" step="1"></div>
+  <div class="field"><label>SUCCESSFUL ANSWERS</label><input id="editSuccess" type="number" min="0" step="1"></div><div class="field"><label>UNSUCCESSFUL ANSWERS</label><input id="editFail" type="number" min="0" step="1"></div>
+ </div>
+ <button class="btn full" id="saveProfileBtn">Save Profile Changes</button><div id="profileStatus" class="status"></div>
+ <div class="form-actions"><button class="btn danger" id="toggleProfileStatus">Deactivate User</button></div>
+ <p class="small">Firebase Authentication passwords cannot be viewed in this panel.</p>
+</div></div>
+
+<script type="module">
+import app, { auth, db } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut, getAuth, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+const ADMIN_UID = "DEBuc9USNcULaH9BY1tXvbRJZYn1";
+const $ = id => document.getElementById(id);
+const userCreationApp = initializeApp(app.options, "UserCreation");
+const userCreationAuth = getAuth(userCreationApp);
+let firestoreUsers = [], firestoreJobs = [], selectedUserId = null;
+
+function esc(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function showLogin(message=""){$("dashboardView").classList.add("hidden");$("loginView").classList.remove("hidden");if(message){$("loginStatus").className="status error";$("loginStatus").textContent=message;}}
+function showDashboard(){$("loginView").classList.add("hidden");$("dashboardView").classList.remove("hidden");refreshAll();}
+$("adminLoginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$("adminLoginButton");b.disabled=true;b.textContent="PLEASE WAIT...";$("loginStatus").textContent="Checking administrator account...";try{const c=await signInWithEmailAndPassword(auth,$("adminEmail").value.trim().toLowerCase(),$("adminPassword").value);if(c.user.uid!==ADMIN_UID){await signOut(auth);showLogin("Access denied. This is not the administrator account.");return;}showDashboard();}catch(err){showLogin("Login failed: "+(err.code||err.message));}finally{b.disabled=false;b.textContent="LOGIN TO ADMIN";}});
+$("logoutBtn").addEventListener("click",async()=>{await signOut(auth);showLogin("Logged out successfully.");});
+onAuthStateChanged(auth,async user=>{if(!user){showLogin();return;}if(user.uid!==ADMIN_UID){await signOut(auth);showLogin("Access denied.");return;}showDashboard();});
+
+function go(section){document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.section===section));document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id==="section-"+section));window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>go(b.dataset.section)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+function openAddUser(){$("addUserForm").reset();$("addUserStatus").textContent="";$("addUserStatus").className="status";$("addUserModal").classList.add("open");}
+function closeAddUser(){$("addUserModal").classList.remove("open");}
+$("addUserBtn").addEventListener("click",openAddUser);
+$("closeAddUserBtn").addEventListener("click",closeAddUser);
+$("addUserModal").addEventListener("click",e=>{if(e.target.id==="addUserModal")closeAddUser();});
+
+$("addUserForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const loginId=$("newLoginId").value.trim().toLowerCase();
+ const name=$("newUserName").value.trim();
+ const password=$("newUserPassword").value;
+ const validUntil=$("newUserValidity").value;
+ const status=$("addUserStatus"),button=$("createUserBtn");
+ if(!/^[a-z0-9._-]{3,40}$/.test(loginId)){status.className="status error";status.textContent="Login ID must be 3–40 characters: letters, numbers, dot, underscore or hyphen.";return;}
+ if(password.length<6){status.className="status error";status.textContent="Password must be at least 6 characters.";return;}
+ button.disabled=true;button.textContent="Creating account...";status.className="status";status.textContent="Please wait...";
+ let createdUser=null;
+ try{
+  const email=loginId+"@answer-site.test";
+  const credential=await createUserWithEmailAndPassword(userCreationAuth,email,password);
+  createdUser=credential.user;
+  const profile={
+   uid:loginId,loginId,name,status:"active",validUntil:validUntil||"",
+   createdAt:new Date().toISOString(),submittedCount:0,deletedCount:0,
+   successfulAnswers:0,unsuccessfulAnswers:0,successRate:0
+  };
+  await setDoc(doc(db,"users",createdUser.uid),profile);
+  await signOut(userCreationAuth);
+  status.className="status success";status.textContent="User created successfully. Login ID: "+loginId;
+  $("addUserForm").reset();await loadUsers();
+ }catch(err){
+  if(createdUser){try{await deleteUser(createdUser);}catch(cleanupError){console.error("Cleanup failed",cleanupError);}}
+  try{if(userCreationAuth.currentUser)await signOut(userCreationAuth);}catch(_){}
+  let msg=err.code||err.message;
+  if(err.code==="auth/email-already-in-use")msg="This Login ID already exists. Choose another Login ID.";
+  if(err.code==="auth/weak-password")msg="Choose a stronger password (at least 6 characters).";
+  if(err.code==="permission-denied")msg="Firestore permission denied. Check that your published Rules allow the admin to create /users documents.";
+  status.className="status error";status.textContent="Could not create user: "+msg;
+ }finally{button.disabled=false;button.textContent="Create User Account";}
+});
+
+async function refreshAll(){await Promise.all([loadUsers(),loadJobs()]);}
+async function loadUsers(){
+ $("usersEmpty").textContent="Loading users...";$("usersEmpty").classList.remove("hidden");
+ try{const snap=await getDocs(collection(db,"users"));firestoreUsers=snap.docs.map(d=>({id:d.id,...d.data()}));$("totalUsers").textContent=firestoreUsers.length;$("activeUsers").textContent=firestoreUsers.filter(u=>!["blocked","inactive"].includes(String(u.status||"active").toLowerCase())).length;renderUsers();}
+ catch(err){firestoreUsers=[];$("totalUsers").textContent="!";$("activeUsers").textContent="!";$("usersBody").innerHTML="";$("usersEmpty").textContent="Could not load users: "+(err.code||err.message);$("usersEmpty").classList.remove("hidden");}
+}
+function renderUsers(){
+ const q=$("userSearch").value.toLowerCase().trim(),filter=$("userFilter").value;
+ const list=firestoreUsers.filter(u=>{const blocked=["blocked","inactive"].includes(String(u.status||"active").toLowerCase());return (`${u.uid||u.loginId||""} ${u.name||""} ${u.id}`).toLowerCase().includes(q)&&(filter==="all"||(filter==="blocked"?blocked:!blocked));});
+ $("usersBody").innerHTML=list.map(u=>{const blocked=["blocked","inactive"].includes(String(u.status||"active").toLowerCase());const login=u.uid||u.loginId||u.id;return `<tr><td><button class="uid-link" data-profile="${esc(u.id)}">${esc(login)}</button></td><td>${esc(u.name||"—")}</td><td><span class="tag ${blocked?"yellow":""}">${blocked?"BLOCKED":"ACTIVE"}</span></td><td>${esc(u.validUntil||"—")}</td><td>${esc(u.submittedCount??0)}</td><td>${esc(u.successRate??0)}%</td><td><button class="btn ${blocked?"success":"danger"}" data-toggle="${esc(u.id)}">${blocked?"Activate":"Deactivate"}</button></td></tr>`;}).join("");
+ $("usersEmpty").classList.toggle("hidden",list.length>0);if(!list.length)$("usersEmpty").textContent="No matching users found.";
+}
+$("usersBody").addEventListener("click",async e=>{const p=e.target.closest("[data-profile]");if(p){openProfile(p.dataset.profile);return;}const t=e.target.closest("[data-toggle]");if(t)await toggleUser(t.dataset.toggle);});
+$("userSearch").addEventListener("input",renderUsers);$("userFilter").addEventListener("change",renderUsers);$("refreshUsers").addEventListener("click",loadUsers);
+
+function openProfile(id){const u=firestoreUsers.find(x=>x.id===id);if(!u)return;selectedUserId=id;$("profileTitle").textContent=(u.name||"User")+" — Profile";$("profileSubtitle").textContent="Login ID: "+(u.uid||u.loginId||id);$("editName").value=u.name||"";$("editValidity").value=u.validUntil||"";$("editSubmitted").value=u.submittedCount??0;$("editDeleted").value=u.deletedCount??0;$("editSuccess").value=u.successfulAnswers??0;$("editFail").value=u.unsuccessfulAnswers??0;$("profileStatus").textContent="";const blocked=["blocked","inactive"].includes(String(u.status||"active").toLowerCase());$("toggleProfileStatus").textContent=blocked?"Activate User":"Deactivate User";$("toggleProfileStatus").className=blocked?"btn success":"btn danger";$("profileModal").classList.add("open");}
+function closeProfile(){$("profileModal").classList.remove("open");selectedUserId=null;}
+$("closeProfileBtn").addEventListener("click",closeProfile);$("profileModal").addEventListener("click",e=>{if(e.target.id==="profileModal")closeProfile();});
+$("saveProfileBtn").addEventListener("click",async()=>{
+ if(!selectedUserId)return;const name=$("editName").value.trim(),validUntil=$("editValidity").value;
+ const submitted=Number($("editSubmitted").value),deleted=Number($("editDeleted").value),success=Number($("editSuccess").value),fail=Number($("editFail").value);
+ if(!name)return alert("Please enter a name.");if([submitted,deleted,success,fail].some(n=>!Number.isSafeInteger(n)||n<0))return alert("Enter valid non-negative whole numbers.");
+ const total=success+fail,rate=total?Number((success/total*100).toFixed(2)):0,b=$("saveProfileBtn");b.disabled=true;b.textContent="Saving...";
+ try{await updateDoc(doc(db,"users",selectedUserId),{name,validUntil,submittedCount:submitted,deletedCount:deleted,successfulAnswers:success,unsuccessfulAnswers:fail,successRate:rate,updatedAt:new Date().toISOString()});await loadUsers();$("profileStatus").className="status success";$("profileStatus").textContent="Profile updated.";openProfile(selectedUserId);}
+ catch(err){$("profileStatus").className="status error";$("profileStatus").textContent="Save failed: "+(err.code||err.message);}
+ finally{b.disabled=false;b.textContent="Save Profile Changes";}
+});
+async function toggleUser(id){const u=firestoreUsers.find(x=>x.id===id);if(!u)return;const blocked=["blocked","inactive"].includes(String(u.status||"active").toLowerCase());if(!confirm(`Are you sure you want to ${blocked?"activate":"deactivate"} this user?`))return;try{await updateDoc(doc(db,"users",id),{status:blocked?"active":"blocked",statusUpdatedAt:new Date().toISOString()});await loadUsers();if(selectedUserId===id)openProfile(id);}catch(err){alert("Status update failed: "+(err.code||err.message));}}
+$("toggleProfileStatus").addEventListener("click",async()=>{if(selectedUserId)await toggleUser(selectedUserId);});
+
+async function loadJobs(){
+ $("jobsEmpty").textContent="Loading jobs...";$("jobsEmpty").classList.remove("hidden");
+ try{const snap=await getDocs(collection(db,"jobs"));firestoreJobs=snap.docs.map(d=>({id:d.id,...d.data()}));$("totalJobs").textContent=firestoreJobs.length;const recent=[...firestoreJobs].slice(-5).reverse();$("recentJobsBody").innerHTML=recent.map(j=>`<tr><td>${esc(j.id)}</td><td>${esc(j.jobName||"—")}</td><td>${esc(j.authorUID||"—")}</td></tr>`).join("")||'<tr><td colspan="3" class="empty">No jobs found.</td></tr>';renderJobs();}
+ catch(err){firestoreJobs=[];$("totalJobs").textContent="!";$("jobsBody").innerHTML="";$("jobsEmpty").textContent="Could not load jobs: "+(err.code||err.message);$("jobsEmpty").classList.remove("hidden");}
+}
+function renderJobs(){const q=$("jobSearch").value.toLowerCase().trim(),list=firestoreJobs.filter(j=>`${j.id} ${j.jobName||""} ${j.answer||""}`.toLowerCase().includes(q));$("jobsBody").innerHTML=list.map(j=>`<tr><td>${esc(j.id)}</td><td>${esc(j.jobName||"—")}</td><td>${esc(j.answer||"—")}</td><td>${esc(j.authorUID||"—")}</td><td><button class="btn secondary" data-edit-job="${esc(j.id)}">Edit</button> <button class="btn danger" data-delete-job="${esc(j.id)}">Delete</button></td></tr>`).join("");$("jobsEmpty").classList.toggle("hidden",list.length>0);if(!list.length)$("jobsEmpty").textContent="No jobs found.";}
+async function addJob(){const raw=prompt("Enter unique Job ID:");if(raw===null)return;const id=raw.trim();if(!id)return alert("Job ID is required.");if(firestoreJobs.some(j=>j.id===id))return alert("Job ID already exists.");const name=prompt("Enter Job Name:");if(name===null)return;const answer=prompt("Enter Answer:");if(answer===null)return;try{await setDoc(doc(db,"jobs",id),{jobName:name.trim(),answer:answer.trim(),dislikes:0,visible:true,authorUID:"Admin",edited:false,editCount:0,createdAt:new Date().toISOString()});await loadJobs();alert("Job added.");}catch(err){alert("Add failed: "+(err.code||err.message));}}
+async function editJob(id){const j=firestoreJobs.find(x=>x.id===id);if(!j)return;const name=prompt("Edit Job Name:",j.jobName||"");if(name===null)return;const answer=prompt("Edit Answer:",j.answer||"");if(answer===null)return;try{await updateDoc(doc(db,"jobs",id),{jobName:name.trim(),answer:answer.trim(),edited:true,editCount:increment(1),updatedAt:new Date().toISOString()});await loadJobs();}catch(err){alert("Edit failed: "+(err.code||err.message));}}
+async function deleteJob(id){if(!confirm("Permanently delete Job ID "+id+"?"))return;try{await deleteDoc(doc(db,"jobs",id));await loadJobs();}catch(err){alert("Delete failed: "+(err.code||err.message));}}
+$("jobsBody").addEventListener("click",e=>{const a=e.target.closest("[data-edit-job]"),d=e.target.closest("[data-delete-job]");if(a)editJob(a.dataset.editJob);if(d)deleteJob(d.dataset.deleteJob);});
+$("addJobBtn").addEventListener("click",addJob);$("jobSearch").addEventListener("input",renderJobs);$("refreshJobs").addEventListener("click",loadJobs);
+</script>
+</body>
+</html>

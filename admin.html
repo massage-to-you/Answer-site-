@@ -227,6 +227,41 @@ function renderUsers() {
   $("usersEmpty").classList.toggle("hidden", users.length > 0);
   if (!users.length) $("usersEmpty").textContent = "No matching user profiles found in Firestore users collection.";
 }
+ async function openUserProfile(uid) {
+  try {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("User profile not found!");
+      return;
+    }
+
+    const user = userSnap.data();
+
+    const newName = prompt(
+      "Enter User Name:",
+      user.name || ""
+    );
+
+    if (newName === null) return;
+
+    if (!newName.trim()) {
+      alert("Name cannot be empty!");
+      return;
+    }
+
+    await updateDoc(userRef, {
+      name: newName.trim()
+    });
+
+    alert("Name updated successfully!");
+    await refreshAll();
+
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+ }
 
 async function toggleUserStatus(userId) {
   const user = firestoreUsers.find(item => item.id === userId);

@@ -2212,35 +2212,61 @@ renderMyRenewHistory(); };
         applyJobForm(await getDoc(jobFormRef));
         onSnapshot(jobFormRef, applyJobForm, err => console.warn('Job form settings listener:', err));
 
-        const myRenewQuery = query(
+        
+const myRenewQuery = query(
   collection(db, 'renewRequests'),
   where('uid', '==', firebaseUID)
 );
 
 const historyBox = document.getElementById('renewRequestHistory');
 
-if (historyBox) {
-  historyBox.innerHTML = '<div class="form-help">Loading your requests...</div>';
-}
-
-onSnapshot(myRenewQuery, (snap) => {
-  myRenewRequests = snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
-
-  renderMyRenewHistory();
-
-  console.log('Renewal history loaded:', snap.size);
-}, (err) => {
-  console.error('Renew history error:', err);
+const showRenewHistoryDebug = (message) => {
+  console.info('[Renew History]', message);
 
   if (historyBox) {
     historyBox.innerHTML =
-      '<div class="form-help">Could not load request history: ' +
-      escapeHtml(err.message) + '</div>';
+      '<div class="form-help">' + message + '</div>';
   }
-});
+};
+
+showRenewHistoryDebug('Connecting to renewal history...');
+
+try {
+  onSnapshot(myRenewQuery, (snap) => {
+    const rows = snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    if (typeof window.updateMyRenewHistoryFromFirebase !== 'function') {
+      showRenewHistoryDebug(
+        'History display function is unavailable. Please refresh the page.'
+      );
+      return;
+    }
+
+    window.updateMyRenewHistoryFromFirebase(rows);
+    console.info('[Renew History] Loaded records:', snap.size);
+
+  }, (err) => {
+    console.error('[Renew History] Firestore listener failed:', err);
+
+    showRenewHistoryDebug(
+      'Could not load history (' +
+      String(err.code || 'error') + '): ' +
+      String(err.message || 'Unknown Firestore error')
+    );
+  });
+
+} catch (err) {
+  console.error('[Renew History] Listener setup failed:', err);
+
+  showRenewHistoryDebug(
+    'History setup failed: ' + String(err.message || err)
+  );
+}
+        
+
         // Keep watching the profile. If the admin blocks this user, end the session.
         onSnapshot(profileRef, async (latestProfile) => {
           const latestStatus = String(latestProfile.exists() ? (latestProfile.data().status || "active") : "missing").toLowerCase();

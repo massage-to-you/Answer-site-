@@ -1955,17 +1955,40 @@ Established on December 16, 1971.`,
       renderPaymentNumbers();
     }
 
-    function renderMyRenewHistory() {
-      const box = document.getElementById('renewRequestHistory');
-      if (!box) return;
-      const rows = [...myRenewRequests].sort((a,b) => String(b.createdAt || b.timestamp || '').localeCompare(String(a.createdAt || a.timestamp || '')));
-      if (!rows.length) { box.innerHTML = '<div class="form-help">No renewal requests submitted yet.</div>'; return; }
-      box.innerHTML = rows.map(r => {
-        const status = String(r.status || 'pending').toLowerCase();
-        const action = status === 'pending' ? 'Waiting for admin review.' : `Admin action: ${status.toUpperCase()} · Reviewed by Admin${r.reviewedAt ? ' · ' + escapeHtml(r.reviewedAt) : ''}`;
-        return `<div class="renew-history-item"><div class="renew-history-top"><strong>${escapeHtml(r.paymentMethod || 'Renewal')} ${r.amount ? '· ' + escapeHtml(r.amount) : ''}</strong><span class="renew-status ${escapeHtml(status)}">${escapeHtml(status)}</span></div><div>Trx ID: <b>${escapeHtml(r.trxId || '—')}</b> · Sender: ${escapeHtml(r.senderMobile || '—')}</div><div class="form-help">Submitted: ${escapeHtml(r.createdAt || r.timestamp || 'Date unavailable')}</div><div class="renew-admin-note">${action}</div></div>`;
-      }).join('');
-    }
+    function renderMyRenewHistory() { const box =
+document.getElementById(‘renewRequestHistory’); if (!box) return;
+
+const rows = […myRenewRequests].sort((a, b) => String(b.createdAt ||
+b.timestamp || ’‘).localeCompare( String(a.createdAt || a.timestamp
+||’’) ) );
+
+if (!rows.length) { box.innerHTML = ’
+
+No renewal requests submitted yet.
+
+’; return; }
+
+box.innerHTML = rows.map(r => { const status = String(r.status ||
+‘pending’).toLowerCase(); const action = status === ‘pending’ ? ‘Waiting
+for admin review.’ :
+Admin action: ${status.toUpperCase()} · Reviewed by Admin${r.reviewedAt ? ' · ' + escapeHtml(r.reviewedAt) : ''};
+
+    return `<div class="renew-history-item">
+      <div class="renew-history-top">
+        <strong>${escapeHtml(r.paymentMethod || 'Renewal')} ${r.amount ? '· ' + escapeHtml(r.amount) : ''}</strong>
+        <span class="renew-status ${escapeHtml(status)}">${escapeHtml(status)}</span>
+      </div>
+      <div>Trx ID: <b>${escapeHtml(r.trxId || '—')}</b> · Sender: ${escapeHtml(r.senderMobile || '—')}</div>
+      <div class="form-help">Submitted: ${escapeHtml(r.createdAt || r.timestamp || 'Date unavailable')}</div>
+      <div class="renew-admin-note">${action}</div>
+    </div>`;
+
+}).join(’’); }
+
+// Bridge the classic script renderer to the Firebase module script.
+window.updateMyRenewHistoryFromFirebase = function(rows) {
+myRenewRequests = Array.isArray(rows) ? rows : [];
+renderMyRenewHistory(); };
 
     async function submitRenew(e) {
       e.preventDefault();

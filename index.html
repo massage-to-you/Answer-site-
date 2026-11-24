@@ -2189,12 +2189,35 @@ Established on December 16, 1971.`,
         applyJobForm(await getDoc(jobFormRef));
         onSnapshot(jobFormRef, applyJobForm, err => console.warn('Job form settings listener:', err));
 
-        const myRenewQuery = query(collection(db, 'renewRequests'), where('uid', '==', firebaseUID));
-        onSnapshot(myRenewQuery, snap => {
-          myRenewRequests = snap.docs.map(d=>({id:d.id,...d.data()}));
-          renderMyRenewHistory();
-        }, err => { console.warn('Renew history listener:',err); document.getElementById('renewRequestHistory').innerHTML='<div class="form-help">Could not load request history.</div>'; });
+        const myRenewQuery = query(
+  collection(db, 'renewRequests'),
+  where('uid', '==', firebaseUID)
+);
 
+const historyBox = document.getElementById('renewRequestHistory');
+
+if (historyBox) {
+  historyBox.innerHTML = '<div class="form-help">Loading your requests...</div>';
+}
+
+onSnapshot(myRenewQuery, (snap) => {
+  myRenewRequests = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+
+  renderMyRenewHistory();
+
+  console.log('Renewal history loaded:', snap.size);
+}, (err) => {
+  console.error('Renew history error:', err);
+
+  if (historyBox) {
+    historyBox.innerHTML =
+      '<div class="form-help">Could not load request history: ' +
+      escapeHtml(err.message) + '</div>';
+  }
+});
         // Keep watching the profile. If the admin blocks this user, end the session.
         onSnapshot(profileRef, async (latestProfile) => {
           const latestStatus = String(latestProfile.exists() ? (latestProfile.data().status || "active") : "missing").toLowerCase();

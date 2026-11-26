@@ -19,7 +19,9 @@
     @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}main{padding:14px}}
     @media(max-width:540px){.topbar{padding:8px 10px}.top-brand{font-size:12px}.top-actions .pill{display:none}main{padding:10px}.page-head{align-items:flex-start;flex-wrap:wrap}.page-head h1{font-size:18px}.grid2,.form-grid,.detail-grid{grid-template-columns:1fr}.stat{padding:10px}.stat-num{font-size:20px}.modal-card{padding:13px}}
     </style>
-    </head>
+      <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+</head>
     <body>
     <div id="loginView" class="login-wrap"><section class="login-card">
      <div class="brand"><i class="fa-solid fa-shield-halved"></i>ANSWER SITE</div><p class="login-sub">Administrator Secure Login</p>
@@ -496,5 +498,15 @@
     $("refreshActivity").addEventListener("click",loadActivity);
     $("deleteAllActivity").addEventListener("click",()=>deleteAllFrom("activityLogs","activity logs","deleteAllActivity",loadActivity));
     </script>
-    </body>
+    
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .catch(error => console.error("PWA service worker registration failed:", error));
+    });
+  }
+</script>
+
+</body>
     </html>

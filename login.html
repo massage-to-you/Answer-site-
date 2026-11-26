@@ -120,7 +120,9 @@
         @media(max-width:380px){.login-card{padding:25px 18px}.contact-buttons{grid-template-columns:1fr}.brand{font-size:19px}}
         @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
       </style>
-    </head>
+      <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+</head>
     <body>
       <header class="topbar">
         <a class="brand" href="login.html"><i class="fa-solid fa-layer-group"></i><span>ANSWER SITE</span></a>
@@ -388,5 +390,15 @@
           }
         });
       </script>
-    </body>
+    
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .catch(error => console.error("PWA service worker registration failed:", error));
+    });
+  }
+</script>
+
+</body>
     </html>

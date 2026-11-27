@@ -1,0 +1,416 @@
+<!-- Note: Save this file as index.html or merge these features into your index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Answer Site</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  #appLoadingScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #090d16;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    transition: opacity 0.25s ease;
+  }
+  .spinner-ring {
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(99, 102, 241, 0.25);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes marqueeScroll {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  .marquee-track {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marqueeScroll 18s linear infinite;
+  }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+<!-- 2. Full Reload Loading Indicator (Prevents blank flash on reload) -->
+<div id="appLoadingScreen">
+  <div class="spinner-ring"></div>
+  <p class="text-sm font-medium tracking-wide text-slate-300">Loading Answer Site...</p>
+</div>
+
+<!-- Top Header Bar -->
+<header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center justify-between gap-2">
+  <div class="flex items-center gap-3">
+    <!-- 5. 3-Line Menu Trigger -->
+    <button id="menuOpenBtn" aria-label="Open menu" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <!-- Answer Site Title + 3. Notification Bell Icon -->
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-base sm:text-lg text-white">Answer Site</span>
+      <button id="notifBellBtn" title="Notifications (48h History)" class="relative p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <span id="notifBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 1. Admin Button (Visible only for specific Admin user) -->
+  <div class="flex items-center gap-2">
+    <a id="adminPanelBtn" href="admin.html" class="hidden px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs sm:text-sm font-semibold text-white">
+      Admin Panel
+    </a>
+  </div>
+</header>
+
+<!-- 5. 3-Line Sidebar Drawer with Marketplace Demo -->
+<aside id="sideMenuDrawer" class="hidden fixed inset-0 z-50 bg-black/60">
+  <div class="w-72 max-w-[82vw] h-full bg-slate-900 border-r border-slate-800 p-4 flex flex-col justify-between">
+    <div class="space-y-2">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <span class="font-bold text-white">Menu</span>
+        <button id="menuCloseBtn" class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">Close</button>
+      </div>
+      <button data-nav="home" class="nav-link w-full text-left px-3 py-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-sm font-medium">Home</button>
+      <button data-nav="marketplace" class="nav-link w-full text-left px-3 py-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-sm font-medium text-emerald-400">Marketplace (Demo)</button>
+      <button data-nav="notifications" class="nav-link w-full text-left px-3 py-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-sm font-medium text-amber-400">Notification History</button>
+      <button data-nav="renew" class="nav-link w-full text-left px-3 py-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-sm font-medium text-indigo-400">Renew Account</button>
+    </div>
+    <p class="text-[11px] text-slate-500">48-hour notification retention active</p>
+  </div>
+</aside>
+
+<main class="max-w-4xl mx-auto p-4 space-y-5">
+
+  <!-- HOME VIEW -->
+  <section id="homeView" class="space-y-4">
+    <!-- 4. Balance & Deposit Section ABOVE Scrolling Headline (4.00 format) -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs text-slate-400">Balance</p>
+        <p id="userBalanceValue" class="text-2xl font-bold text-emerald-400 mt-1">0.00</p>
+        <p id="balanceFormulaHint" class="text-[11px] text-slate-500 mt-1">Success reward - Fail deduction</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs text-slate-400">Deposit</p>
+        <p id="userDepositValue" class="text-2xl font-bold text-sky-400 mt-1">4.00</p>
+        <p class="text-[11px] text-slate-500 mt-1">Set by admin</p>
+      </div>
+    </div>
+
+    <!-- Scrolling Headline -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 overflow-hidden">
+      <div id="scrollingHeadlineText" class="marquee-track text-sm text-amber-300 font-medium">
+        Welcome to Answer Site — Earn from successful answers and manage your account smoothly.
+      </div>
+    </div>
+
+    <!-- Answer / Job Feed Placeholder -->
+    <div id="jobsContainer" class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+      <h2 class="text-base font-semibold text-white">Questions & Answers</h2>
+      <p class="text-xs text-slate-400">Connect your existing job/answer list rendering here; balance updates automatically from successful and unsuccessful answer counts.</p>
+    </div>
+  </section>
+
+  <!-- 3. NOTIFICATION HISTORY PAGE (48-Hour Auto Delete) -->
+  <section id="notificationsView" class="hidden space-y-4">
+    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-xl">
+      <div>
+        <h2 class="text-lg font-bold text-white">Notification History</h2>
+        <p class="text-xs text-slate-400">Notifications automatically expire and are permanently deleted after 48 hours.</p>
+      </div>
+      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium">Back to Home</button>
+    </div>
+    <div id="notificationsList" class="space-y-3">
+      <p class="text-sm text-slate-400">Loading notifications...</p>
+    </div>
+  </section>
+
+  <!-- 5. MARKETPLACE DEMO PAGE -->
+  <section id="marketplaceView" class="hidden space-y-4">
+    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-xl">
+      <div>
+        <h2 class="text-lg font-bold text-emerald-400">Marketplace (Demo)</h2>
+        <p class="text-xs text-slate-400">Demo preview page — full marketplace features coming soon.</p>
+      </div>
+      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium">Back to Home</button>
+    </div>
+    <div class="bg-slate-900 border border-dashed border-slate-700 rounded-xl p-8 text-center space-y-2">
+      <p class="text-base font-semibold text-slate-200">Marketplace Demo Page</p>
+      <p class="text-xs text-slate-400 max-w-md mx-auto">This placeholder page is ready so you can customize items, listings, and actions in a future update.</p>
+    </div>
+  </section>
+
+  <!-- 6. RENEW ACCOUNT PAGE -->
+  <section id="renewView" class="hidden space-y-4">
+    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-xl">
+      <div>
+        <h2 class="text-lg font-bold text-white">Renew Account</h2>
+        <p class="text-xs text-slate-400">Renew using your Deposit Balance and record history in Admin & Home.</p>
+      </div>
+      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium">Back to Home</button>
+    </div>
+
+    <!-- Scrolling Headline on Renew Page -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 overflow-hidden">
+      <div class="marquee-track text-sm text-indigo-300 font-medium">
+        Account Renewal Notice — Use your Deposit Balance for instant renewal with full request history.
+      </div>
+    </div>
+
+    <!-- Renew Account with Deposit Balance Button BELOW Scrolling Headline -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-semibold text-white">Deposit Balance: <span id="renewPageDeposit" class="text-sky-400">0.00</span></p>
+          <p class="text-xs text-slate-400">Renewal Cost: <span id="renewCostDisplay" class="text-amber-300">4.00</span></p>
+        </div>
+        <button id="renewWithDepositBtn" class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm font-semibold text-white">
+          Renew account with deposit balance
+        </button>
+      </div>
+      <p id="renewStatusMsg" class="text-xs text-slate-300"></p>
+    </div>
+
+    <!-- Renew / Request History (Shown on Home & Admin) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+      <h3 class="text-sm font-semibold text-white">My Renew History</h3>
+      <div id="renewHistoryList" class="space-y-2 text-xs text-slate-300">
+        <p class="text-slate-400">No renewal history yet.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, collection, query, where, getDocs,
+    deleteDoc, addDoc, runTransaction, Timestamp, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const ADMIN_UID = "DEBuc9USNcULaH9BY1tXvbRJZYn1";
+  const firebaseConfig = {
+    // Keep your existing Firebase config object here
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let currentUserData = null;
+  let homeSettings = {
+    rewardPerSuccess: 0.50,
+    deductionPerFail: 0.25,
+    depositRenewCost: 4.00
+  };
+
+  function hideLoadingScreen() {
+    const loader = document.getElementById("appLoadingScreen");
+    if (!loader) return;
+    loader.style.opacity = "0";
+    setTimeout(() => { loader.style.display = "none"; }, 250);
+  }
+
+  function switchView(viewName) {
+    ["homeView", "notificationsView", "marketplaceView", "renewView"].forEach((id) => {
+      document.getElementById(id)?.classList.add("hidden");
+    });
+    const targetMap = {
+      home: "homeView",
+      notifications: "notificationsView",
+      marketplace: "marketplaceView",
+      renew: "renewView"
+    };
+    document.getElementById(targetMap[viewName] || "homeView")?.classList.remove("hidden");
+    document.getElementById("sideMenuDrawer")?.classList.add("hidden");
+  }
+
+  document.getElementById("menuOpenBtn").addEventListener("click", () => {
+    document.getElementById("sideMenuDrawer").classList.remove("hidden");
+  });
+  document.getElementById("menuCloseBtn").addEventListener("click", () => {
+    document.getElementById("sideMenuDrawer").classList.add("hidden");
+  });
+  document.getElementById("notifBellBtn").addEventListener("click", () => switchView("notifications"));
+  document.querySelectorAll(".nav-link").forEach((btn) => {
+    btn.addEventListener("click", () => switchView(btn.dataset.nav));
+  });
+
+  function renderBalanceAndDeposit() {
+    const successful = Number(currentUserData?.successfulAnswers || 0);
+    const unsuccessful = Number(currentUserData?.unsuccessfulAnswers || 0);
+    const reward = Number(homeSettings.rewardPerSuccess || 0);
+    const deduction = Number(homeSettings.deductionPerFail || 0);
+    const deposit = Number(currentUserData?.depositBalance ?? 4.00);
+    const renewCost = Number(homeSettings.depositRenewCost ?? 4.00);
+
+    const calculatedBalance = (successful * reward) - (unsuccessful * deduction);
+    document.getElementById("userBalanceValue").textContent = calculatedBalance.toFixed(2);
+    document.getElementById("userDepositValue").textContent = deposit.toFixed(2);
+    document.getElementById("renewPageDeposit").textContent = deposit.toFixed(2);
+    document.getElementById("renewCostDisplay").textContent = renewCost.toFixed(2);
+    document.getElementById("balanceFormulaHint").textContent =
+      `(${successful} × ${reward.toFixed(2)}) - (${unsuccessful} × ${deduction.toFixed(2)})`;
+  }
+
+  async function loadHomeSettings() {
+    const snap = await getDoc(doc(db, "siteSettings", "home"));
+    if (snap.exists()) {
+      const d = snap.data();
+      homeSettings = {
+        rewardPerSuccess: Number(d.rewardPerSuccess ?? 0.50),
+        deductionPerFail: Number(d.deductionPerFail ?? 0.25),
+        depositRenewCost: Number(d.depositRenewCost ?? 4.00)
+      };
+      if (d.headline) {
+        document.getElementById("scrollingHeadlineText").textContent = d.headline;
+      }
+    }
+  }
+
+  // 3. Load & auto-delete notifications older than 48 hours
+  async function loadNotifications(uid) {
+    const now = Timestamp.now();
+    const snap = await getDocs(collection(db, "notifications"));
+    const listEl = document.getElementById("notificationsList");
+    const badgeEl = document.getElementById("notifBadge");
+    const activeItems = [];
+
+    for (const docSnap of snap.docs) {
+      const data = docSnap.data();
+      const exp = data.expiresAt;
+      if (exp && exp.toMillis() <= now.toMillis()) {
+        try { await deleteDoc(doc(db, "notifications", docSnap.id)); } catch (_) {}
+        continue;
+      }
+      if (!data.targetUid || data.targetUid === "all" || data.targetUid === uid) {
+        activeItems.push({ id: docSnap.id, ...data });
+      }
+    }
+
+    if (activeItems.length > 0) {
+      badgeEl.textContent = String(activeItems.length);
+      badgeEl.classList.remove("hidden");
+      listEl.innerHTML = activeItems.map((item) => `
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div class="font-semibold text-sm text-amber-300">${item.title || "Notification"}</div>
+          <p class="text-xs text-slate-300 mt-1">${item.message || ""}</p>
+        </div>
+      `).join("");
+    } else {
+      badgeEl.classList.add("hidden");
+      listEl.innerHTML = `<p class="text-sm text-slate-400">No active notifications (auto-deleted after 48 hours).</p>`;
+    }
+  }
+
+  async function loadRenewHistory(uid) {
+    const q = query(collection(db, "renewRequests"), where("uid", "==", uid));
+    const snap = await getDocs(q);
+    const listEl = document.getElementById("renewHistoryList");
+    if (snap.empty) {
+      listEl.innerHTML = `<p class="text-slate-400">No renewal history yet.</p>`;
+      return;
+    }
+    const items = snap.docs.map((d) => d.data());
+    listEl.innerHTML = items.map((r) => `
+      <div class="flex items-center justify-between bg-slate-950 border border-slate-800 rounded-lg px-3 py-2">
+        <span>${r.method || "Renewal"} — $${Number(r.amount || 0).toFixed(2)}</span>
+        <span class="uppercase text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400">${r.status || "approved"}</span>
+      </div>
+    `).join("");
+  }
+
+  // 6. Renew Account with Deposit Balance + add history for Admin & Home
+  document.getElementById("renewWithDepositBtn").addEventListener("click", async () => {
+    const statusEl = document.getElementById("renewStatusMsg");
+    if (!currentUser) {
+      statusEl.textContent = "Please sign in first.";
+      return;
+    }
+    const renewCost = Number(homeSettings.depositRenewCost ?? 4.00);
+    const userRef = doc(db, "users", currentUser.uid);
+
+    try {
+      await runTransaction(db, async (tx) => {
+        const userSnap = await tx.get(userRef);
+        if (!userSnap.exists()) throw new Error("User profile not found.");
+        const uData = userSnap.data();
+        const currentDeposit = Number(uData.depositBalance || 0);
+        if (currentDeposit < renewCost) {
+          throw new Error(`Insufficient deposit balance (${currentDeposit.toFixed(2)} < ${renewCost.toFixed(2)}).`);
+        }
+        const nextDeposit = Number((currentDeposit - renewCost).toFixed(2));
+        const baseTime = uData.validUntil?.toMillis && uData.validUntil.toMillis() > Date.now()
+          ? uData.validUntil.toMillis()
+          : Date.now();
+        const nextValidUntil = Timestamp.fromMillis(baseTime + 30 * 24 * 60 * 60 * 1000);
+
+        tx.update(userRef, {
+          depositBalance: nextDeposit,
+          validUntil: nextValidUntil,
+          updatedAt: serverTimestamp()
+        });
+      });
+
+      await addDoc(collection(db, "renewRequests"), {
+        uid: currentUser.uid,
+        method: "Deposit Balance",
+        amount: renewCost,
+        status: "approved",
+        createdAt: serverTimestamp()
+      });
+
+      const refreshed = await getDoc(userRef);
+      currentUserData = refreshed.data();
+      renderBalanceAndDeposit();
+      await loadRenewHistory(currentUser.uid);
+      statusEl.textContent = `Account renewed successfully using ${renewCost.toFixed(2)} from Deposit Balance!`;
+    } catch (err) {
+      statusEl.textContent = err.message || "Could not renew account.";
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    const adminBtn = document.getElementById("adminPanelBtn");
+    if (user && user.uid === ADMIN_UID) {
+      adminBtn.classList.remove("hidden");
+    } else {
+      adminBtn.classList.add("hidden");
+    }
+
+    await loadHomeSettings();
+    if (user) {
+      const uSnap = await getDoc(doc(db, "users", user.uid));
+      currentUserData = uSnap.exists() ? uSnap.data() : {};
+      renderBalanceAndDeposit();
+      await loadNotifications(user.uid);
+      await loadRenewHistory(user.uid);
+    } else {
+      renderBalanceAndDeposit();
+    }
+    hideLoadingScreen();
+  });
+</script>
+</body>
+</html>

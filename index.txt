@@ -1,0 +1,1369 @@
+<!-- FILE: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Answer Site</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --bg-primary: #060b19;
+      --bg-secondary: #0d162c;
+      --bg-card: #111d38;
+      --bg-input: #091124;
+      --accent-blue: #2563eb;
+      --accent-cyan: #38bdf8;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(56, 189, 248, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      outline: none !important;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Smooth Full-Screen Loading Overlay */
+    #appLoader {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #0f1c3d 0%, #050914 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    #appLoader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .spinner-ring {
+      width: 52px;
+      height: 52px;
+      border: 4px solid rgba(56, 189, 248, 0.18);
+      border-top-color: #38bdf8;
+      border-right-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin-bottom: 14px;
+    }
+    .loader-text {
+      color: #e2e8f0;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Login Screen */
+    #loginSection {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #13254c 0%, #060b19 70%);
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .login-logo .brand-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #38bdf8);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #ffffff;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.4);
+    }
+    .login-logo h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+    .login-logo p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: var(--bg-input);
+      color: #ffffff;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.2s ease;
+      text-decoration: none;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      width: 100%;
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+    }
+    .btn-amber {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #060b19;
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+    .btn-outline {
+      background: rgba(56, 189, 248, 0.08);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+    }
+
+    /* Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 16, 34, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .menu-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .site-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .site-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+    .bell-btn {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .bell-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid var(--bg-primary);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-header-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #060b19;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Side Drawer Menu */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.72);
+      z-index: 200;
+      display: none;
+    }
+    .drawer-backdrop.open {
+      display: block;
+    }
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      left: -285px;
+      width: 275px;
+      height: 100vh;
+      background: #0b1326;
+      border-right: 1px solid var(--border-color);
+      z-index: 210;
+      transition: left 0.26s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+    }
+    .side-drawer.open {
+      left: 0;
+    }
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+    .drawer-user-info {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    .drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      color: #e2e8f0;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: rgba(37, 99, 235, 0.22);
+      color: #38bdf8;
+    }
+    .nav-item .tag-soon {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    /* Balance & Deposit Strip (Above Scrolling Headline) */
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .wallet-card {
+      background: linear-gradient(145deg, #111e3b, #0b1429);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .wallet-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+    }
+    .wallet-amount {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .wallet-amount.balance-val { color: #10b981; }
+    .wallet-amount.deposit-val { color: #38bdf8; }
+    .wallet-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Scrolling Headline (Marquee) */
+    .headline-bar {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.22), rgba(16, 185, 129, 0.16));
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 11px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .headline-badge {
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .marquee-wrap {
+      overflow: hidden;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .marquee-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marqueeScroll 18s linear infinite;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Renew Account with Deposit Balance Bar (Below Scrolling Headline) */
+    .renew-quick-bar {
+      background: var(--bg-card);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 11px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .renew-meta {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    .renew-meta strong {
+      color: #fbbf24;
+    }
+
+    /* Cards & Sections */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .view-section {
+      display: none;
+    }
+    .view-section.active {
+      display: block;
+    }
+
+    /* Search & Answer Highlight */
+    .answer-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
+      color: #34d399;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Dual WorkUpJob Windows */
+    .dual-windows {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 768px) {
+      .dual-windows {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .iframe-box {
+      background: #070d1d;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .iframe-header {
+      padding: 8px 12px;
+      background: #0e1933;
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .iframe-box iframe {
+      width: 100%;
+      height: 440px;
+      border: none;
+      background: #ffffff;
+    }
+
+    /* Notification & History Items */
+    .list-item {
+      background: rgba(9, 17, 36, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 11px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-approved { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .badge-rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+    /* Toast */
+    #toastBox {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid var(--accent-cyan);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 9998;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Smooth Loading Spinner -->
+  <div id="appLoader">
+    <div class="spinner-ring"></div>
+    <div class="loader-text" id="loaderText">Loading Answer Site...</div>
+  </div>
+
+  <!-- Toast Message -->
+  <div id="toastBox"></div>
+
+  <!-- LOGIN VIEW -->
+  <section id="loginSection" style="display:none;">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="brand-badge">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h1>Answer Site</h1>
+        <p>Sign in with your authorized credentials</p>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-right-to-bracket"></i> Login Now
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- MAIN APP SHELL -->
+  <div id="appShell" style="display:none;">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="menu-btn" id="openDrawerBtn" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="site-title-wrap">
+          <span class="site-title" onclick="switchView('homeView')">Answer Site</span>
+          <!-- Notification Bell Icon Next to Answer Site -->
+          <button class="bell-btn" id="notifBellBtn" onclick="switchView('notificationsView')" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="bell-badge" id="notifBadge">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Specific UID Admin Button -->
+        <a href="admin.html" id="adminPanelBtn" class="admin-header-btn">
+          <i class="fa-solid fa-user-shield"></i> Admin
+        </a>
+        <button class="menu-btn" onclick="switchView('homeView')" title="Home">
+          <i class="fa-solid fa-house"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 3-Line Side Drawer Menu -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="side-drawer" id="sideDrawer">
+      <div class="drawer-header">
+        <strong style="font-size:16px; color:#38bdf8;">Answer Site Menu</strong>
+        <button class="menu-btn" id="closeDrawerBtn" style="width:32px;height:32px;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="drawer-user-info">
+        <div style="font-weight:700; font-size:14px;" id="drawerUserName">User</div>
+        <div style="font-size:12px; color:#94a3b8; margin-top:2px;" id="drawerUserMeta">ID: --</div>
+      </div>
+
+      <nav class="drawer-nav">
+        <button class="nav-item active" onclick="switchView('homeView')">
+          <i class="fa-solid fa-house"></i> Home Dashboard
+        </button>
+        <button class="nav-item" onclick="switchView('postAnswerView')">
+          <i class="fa-solid fa-circle-plus"></i> Post New Answer
+        </button>
+        <button class="nav-item" onclick="switchView('workupView')">
+          <i class="fa-solid fa-window-restore"></i> Dual WorkUpJob
+        </button>
+        <button class="nav-item" onclick="switchView('notificationsView')">
+          <i class="fa-solid fa-bell"></i> Notifications (48h)
+        </button>
+        <button class="nav-item" onclick="switchView('renewView')">
+          <i class="fa-solid fa-rotate"></i> Renew & History
+        </button>
+        <!-- Marketplace Section Placeholder -->
+        <button class="nav-item" onclick="switchView('marketplaceView')">
+          <i class="fa-solid fa-store"></i> Marketplace <span class="tag-soon">Demo</span>
+        </button>
+        <button class="nav-item" onclick="switchView('supportView')">
+          <i class="fa-solid fa-headset"></i> Support
+        </button>
+      </nav>
+
+      <button class="btn btn-danger" id="logoutBtn" style="margin-top:12px; width:100%;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </aside>
+
+    <main class="container">
+      <!-- Balance & Deposit Section (Above Scrolling Headline) -->
+      <div class="wallet-grid">
+        <div class="wallet-card">
+          <div class="wallet-label">
+            <i class="fa-solid fa-coins" style="color:#10b981;"></i> Balance
+          </div>
+          <div class="wallet-amount balance-val" id="userBalanceDisplay">0.00</div>
+          <div class="wallet-sub" id="balanceFormulaNote">Success: 0 | Failed: 0</div>
+        </div>
+        <div class="wallet-card">
+          <div class="wallet-label">
+            <i class="fa-solid fa-wallet" style="color:#38bdf8;"></i> Deposit
+          </div>
+          <div class="wallet-amount deposit-val" id="userDepositDisplay">0.00</div>
+          <div class="wallet-sub">Available for account renewal</div>
+        </div>
+      </div>
+
+      <!-- Scrolling Headline -->
+      <div class="headline-bar">
+        <span class="headline-badge"><i class="fa-solid fa-bullhorn"></i> NOTICE</span>
+        <div class="marquee-wrap">
+          <div class="marquee-text" id="scrollingHeadlineText">
+            Welcome to Answer Site! Follow website rules and verify every answer carefully.
+          </div>
+        </div>
+      </div>
+
+      <!-- Renew Account with Deposit Balance Button (Below Scrolling Headline) -->
+      <div class="renew-quick-bar">
+        <div class="renew-meta">
+          <div>Validity: <strong id="accountValidUntil">Checking...</strong></div>
+          <div>Renewal Fee: <strong id="renewCostLabel">4.00</strong> (from Deposit)</div>
+        </div>
+        <button class="btn btn-amber" id="quickDepositRenewBtn">
+          <i class="fa-solid fa-bolt"></i> Renew Account with Deposit Balance
+        </button>
+      </div>
+
+      <!-- VIEW 1: HOME DASHBOARD -->
+      <section id="homeView" class="view-section active">
+        <!-- Search Gated Job Answer Finder -->
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-magnifying-glass" style="color:#38bdf8;"></i> Job Search</div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="jobSearchInput" class="form-control" placeholder="Type job title or keyword to view answer..." />
+            <button class="btn btn-primary" style="width:auto; white-space:nowrap;" id="searchJobBtn">Search</button>
+          </div>
+          <div id="searchResultsContainer" style="margin-top:12px;">
+            <p style="font-size:13px; color:var(--text-muted);">Search above to view matching answers.</p>
+          </div>
+        </div>
+
+        <!-- User Guide & Website Rules -->
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> User Guide</div>
+          <p id="userGuideText" style="font-size:13px; color:#cbd5e1; line-height:1.6;">Loading guide...</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-scale-balanced" style="color:#f59e0b;"></i> Website Rules</div>
+          <p id="websiteRulesText" style="font-size:13px; color:#cbd5e1; line-height:1.6;">Loading rules...</p>
+        </div>
+
+        <!-- Home Renew History Summary -->
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color:#38bdf8;"></i> Recent Renewal History</div>
+          <div id="homeRenewHistoryList">
+            <p style="font-size:13px; color:var(--text-muted);">No renewal records found.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: POST NEW ANSWER -->
+      <section id="postAnswerView" class="view-section">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-circle-plus" style="color:#10b981;"></i> Post New Answer</div>
+          <form id="postJobForm">
+            <div class="form-group">
+              <label>Job / Question Title</label>
+              <input type="text" id="newJobTitle" class="form-control" placeholder="Enter exact job title" required />
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="newJobCategory" class="form-control" placeholder="e.g. Data Entry, Survey, Microjob" required />
+            </div>
+            <div class="form-group">
+              <label>Correct Answer</label>
+              <textarea id="newJobAnswer" class="form-control" rows="4" placeholder="Write the verified answer..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success" style="width:100%;">
+              <i class="fa-solid fa-paper-plane"></i> Submit Answer
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- VIEW 3: DUAL WORKUPJOB WINDOWS -->
+      <section id="workupView" class="view-section">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-window-restore" style="color:#38bdf8;"></i> WorkUpJob Dual Workspace</div>
+          <div class="dual-windows">
+            <div class="iframe-box">
+              <div class="iframe-header">
+                <span>Window 1 — Account A</span>
+                <a href="https://workupjob.com" target="_blank" style="color:#94a3b8; font-size:11px;">Open Tab</a>
+              </div>
+              <iframe src="https://workupjob.com" title="WorkUpJob Window 1"></iframe>
+            </div>
+            <div class="iframe-box">
+              <div class="iframe-header">
+                <span>Window 2 — Account B</span>
+                <a href="https://workupjob.com" target="_blank" style="color:#94a3b8; font-size:11px;">Open Tab</a>
+              </div>
+              <iframe src="https://workupjob.com" title="WorkUpJob Window 2"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: NOTIFICATION HISTORY (48-HOUR AUTO-DELETE) -->
+      <section id="notificationsView" class="view-section">
+        <div class="card">
+          <div class="card-title">
+            <i class="fa-solid fa-bell" style="color:#38bdf8;"></i> Notifications
+            <span style="margin-left:auto; font-size:11px; color:#94a3b8;">Auto-deletes after 48h</span>
+          </div>
+          <div id="notificationsList">
+            <p style="font-size:13px; color:var(--text-muted);">No active notifications.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: RENEW & FULL HISTORY -->
+      <section id="renewView" class="view-section">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-rotate" style="color:#f59e0b;"></i> Renew Subscription</div>
+          <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">
+            Renew instantly using your Deposit Balance or submit a manual payment reference below.
+          </p>
+          <button class="btn btn-amber" style="width:100%; margin-bottom:16px;" onclick="document.getElementById('quickDepositRenewBtn').click()">
+            <i class="fa-solid fa-bolt"></i> Instant Renew with Deposit Balance
+          </button>
+
+          <form id="manualRenewForm">
+            <div class="form-group">
+              <label>Payment Method (bKash / Nagad / Binance)</label>
+              <input type="text" id="renewMethodInput" class="form-control" placeholder="e.g. bKash Personal" required />
+            </div>
+            <div class="form-group">
+              <label>Transaction ID / Sender Number</label>
+              <input type="text" id="renewTrxInput" class="form-control" placeholder="Enter Transaction ID" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Manual Renew Request</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-list-check" style="color:#38bdf8;"></i> My Renewal History</div>
+          <div id="fullRenewHistoryList"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: MARKETPLACE DEMO PLACEHOLDER -->
+      <section id="marketplaceView" class="view-section">
+        <div class="card" style="text-align:center; padding:32px 18px;">
+          <div style="font-size:42px; color:#38bdf8; margin-bottom:12px;">
+            <i class="fa-solid fa-store"></i>
+          </div>
+          <h2 style="font-size:20px; margin-bottom:8px;">Answer Site Marketplace</h2>
+          <p style="font-size:13px; color:#94a3b8; max-width:460px; margin:0 auto 16px;">
+            Buy and sell verified micro-task resources, templates, and digital tools directly with your platform balance.
+          </p>
+          <span class="badge badge-pending" style="font-size:12px; padding:6px 14px;">
+            Coming Soon — Demo Preview
+          </span>
+        </div>
+      </section>
+
+      <!-- VIEW 7: SUPPORT -->
+      <section id="supportView" class="view-section">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-headset" style="color:#38bdf8;"></i> Contact Support</div>
+          <form id="supportForm">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="supportSubject" class="form-control" placeholder="Issue summary" required />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="supportMessage" class="form-control" rows="4" placeholder="Describe your issue..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Support Ticket</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      collection,
+      query,
+      where,
+      getDocs,
+      orderBy,
+      serverTimestamp,
+      Timestamp,
+      runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // =========================================================
+    // REPLACE WITH YOUR FIREBASE PROJECT CONFIG
+    // =========================================================
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "answer-site.firebaseapp.com",
+      projectId: "answer-site",
+      storageBucket: "answer-site.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const ADMIN_UID = "DEBuc9USNcULaH9BY1tXvbRJZYn1";
+    const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let currentUserData = {};
+    let siteSettings = {
+      notice: "Welcome to Answer Site!",
+      userGuide: "Search a job title to view verified answers or post new answers.",
+      websiteRules: "Do not submit fake or duplicate answers. 3 dislikes auto-archive a post.",
+      rewardPerSuccess: 0.50,
+      deductionPerFail: 0.25,
+      depositRenewCost: 4.00
+    };
+
+    const loader = document.getElementById("appLoader");
+    const loaderText = document.getElementById("loaderText");
+
+    function showLoader(msg = "Loading...") {
+      loaderText.textContent = msg;
+      loader.classList.remove("hidden");
+    }
+    function hideLoader() {
+      loader.classList.add("hidden");
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById("toastBox");
+      box.textContent = msg;
+      box.style.display = "block";
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { box.style.display = "none"; }, 3200);
+    }
+
+    window.switchView = function(viewId) {
+      document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add("active");
+      document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+      closeDrawer();
+    };
+
+    // Drawer Controls
+    const sideDrawer = document.getElementById("sideDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    function openDrawer() {
+      sideDrawer.classList.add("open");
+      drawerBackdrop.classList.add("open");
+    }
+    function closeDrawer() {
+      sideDrawer.classList.remove("open");
+      drawerBackdrop.classList.remove("open");
+    }
+    document.getElementById("openDrawerBtn").addEventListener("click", openDrawer);
+    document.getElementById("closeDrawerBtn").addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", closeDrawer);
+
+    // Format Currency strictly like 4.00
+    function fmtMoney(val) {
+      const num = Number(val);
+      return (isNaN(num) ? 0 : num).toFixed(2);
+    }
+
+    function updateWalletUI() {
+      const successCount = Number(currentUserData.successfulAnswers || 0);
+      const failCount = Number(currentUserData.unsuccessfulAnswers || 0);
+      const rewardRate = Number(siteSettings.rewardPerSuccess ?? 0.50);
+      const deductRate = Number(siteSettings.deductionPerFail ?? 0.25);
+      const depositVal = Number(currentUserData.depositBalance || 0);
+      const renewCost = Number(siteSettings.depositRenewCost ?? 4.00);
+
+      const calculatedBalance = Math.max(0, (successCount * rewardRate) - (failCount * deductRate));
+
+      document.getElementById("userBalanceDisplay").textContent = fmtMoney(calculatedBalance);
+      document.getElementById("balanceFormulaNote").textContent =
+        `Success: ${successCount} (+${fmtMoney(rewardRate)}) | Failed: ${failCount} (-${fmtMoney(deductRate)})`;
+      document.getElementById("userDepositDisplay").textContent = fmtMoney(depositVal);
+      document.getElementById("renewCostLabel").textContent = fmtMoney(renewCost);
+
+      const validUntil = currentUserData.validUntil || "Not Set";
+      document.getElementById("accountValidUntil").textContent = validUntil;
+    }
+
+    async function loadSiteSettings() {
+      try {
+        const snap = await getDoc(doc(db, "siteSettings", "home"));
+        if (snap.exists()) {
+          siteSettings = { ...siteSettings, ...snap.data() };
+        }
+        document.getElementById("scrollingHeadlineText").textContent = siteSettings.notice || "Welcome to Answer Site!";
+        document.getElementById("userGuideText").textContent = siteSettings.userGuide || "";
+        document.getElementById("websiteRulesText").textContent = siteSettings.websiteRules || "";
+      } catch (e) {
+        console.error("Settings load error:", e);
+      }
+    }
+
+    async function loadUserProfile(uid) {
+      const userSnap = await getDoc(doc(db, "users", uid));
+      if (userSnap.exists()) {
+        currentUserData = userSnap.data();
+      } else {
+        currentUserData = { name: currentUser.email, depositBalance: 0, successfulAnswers: 0, unsuccessfulAnswers: 0 };
+      }
+      document.getElementById("drawerUserName").textContent = currentUserData.name || currentUser.email;
+      document.getElementById("drawerUserMeta").textContent = `Login ID: ${currentUserData.loginId || uid.slice(0, 8)}`;
+      updateWalletUI();
+    }
+
+    // Load Notifications with 48-hour Auto-Delete Cleanup
+    async function loadNotifications(uid) {
+      const listEl = document.getElementById("notificationsList");
+      const badgeEl = document.getElementById("notifBadge");
+      try {
+        const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        const nowMs = Date.now();
+        const activeItems = [];
+
+        for (const d of snap.docs) {
+          const data = d.data();
+          let createdMs = data.createdAt?.toMillis ? data.createdAt.toMillis() : nowMs;
+          let expiresMs = data.expiresAt?.toMillis ? data.expiresAt.toMillis() : (createdMs + FORTY_EIGHT_HOURS_MS);
+
+          // Auto-delete expired notifications (> 48 hours)
+          if (expiresMs <= nowMs) {
+            if (uid === ADMIN_UID) {
+              deleteDoc(doc(db, "notifications", d.id)).catch(() => {});
+            }
+            continue;
+          }
+
+          if (!data.targetUid || data.targetUid === "all" || data.targetUid === uid) {
+            activeItems.push({ id: d.id, ...data, createdMs, expiresMs });
+          }
+        }
+
+        if (activeItems.length > 0) {
+          badgeEl.textContent = activeItems.length;
+          badgeEl.style.display = "inline-flex";
+          listEl.innerHTML = activeItems.map(item => {
+            const hrsLeft = Math.max(1, Math.ceil((item.expiresMs - nowMs) / (1000 * 60 * 60)));
+            return `
+              <div class="list-item">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                  <strong style="color:#38bdf8; font-size:14px;">${escapeHtml(item.title || "Notification")}</strong>
+                  <span style="font-size:11px; color:#94a3b8;">Expires in ${hrsLeft}h</span>
+                </div>
+                <p style="font-size:13px; color:#e2e8f0; line-height:1.45;">${escapeHtml(item.message || "")}</p>
+              </div>
+            `;
+          }).join("");
+        } else {
+          badgeEl.style.display = "none";
+          listEl.innerHTML = `<p style="font-size:13px; color:var(--text-muted);">No active notifications.</p>`;
+        }
+      } catch (e) {
+        console.error("Notifications error:", e);
+      }
+    }
+
+    // Load User Renewal History (Home + Renew Page)
+    async function loadRenewHistory(uid) {
+      const homeList = document.getElementById("homeRenewHistoryList");
+      const fullList = document.getElementById("fullRenewHistoryList");
+      try {
+        const q = query(collection(db, "renewRequests"), where("uid", "==", uid));
+        const snap = await getDocs(q);
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        items.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+        if (items.length === 0) {
+          const emptyHtml = `<p style="font-size:13px; color:var(--text-muted);">No renewal history yet.</p>`;
+          homeList.innerHTML = emptyHtml;
+          fullList.innerHTML = emptyHtml;
+          return;
+        }
+
+        const renderRows = (arr) => arr.map(r => {
+          const status = (r.status || "pending").toLowerCase();
+          const badgeClass = status === "approved" ? "badge-approved" : status === "rejected" ? "badge-rejected" : "badge-pending";
+          const dateStr = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleString() : "Just now";
+          return `
+            <div class="list-item">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:13px; color:#ffffff;">${escapeHtml(r.method || "Renewal")} — ${fmtMoney(r.amount || siteSettings.depositRenewCost)}</strong>
+                <span class="badge ${badgeClass}">${status.toUpperCase()}</span>
+              </div>
+              <div style="font-size:11px; color:#94a3b8; margin-top:4px;">
+                Ref: ${escapeHtml(r.trxId || "Instant Deposit")} • ${dateStr}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        homeList.innerHTML = renderRows(items.slice(0, 3));
+        fullList.innerHTML = renderRows(items);
+      } catch (e) {
+        console.error("Renew history error:", e);
+      }
+    }
+
+    // Instant Renew Account with Deposit Balance
+    document.getElementById("quickDepositRenewBtn").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const cost = Number(siteSettings.depositRenewCost ?? 4.00);
+      const currentDeposit = Number(currentUserData.depositBalance || 0);
+
+      if (currentDeposit < cost) {
+        showToast(`Insufficient Deposit Balance! Need ${fmtMoney(cost)}, have ${fmtMoney(currentDeposit)}.`);
+        return;
+      }
+
+      if (!confirm(`Renew account for 30 days using ${fmtMoney(cost)} from Deposit Balance?`)) return;
+
+      showLoader("Processing Deposit Renewal...");
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        const newDeposit = Number((currentDeposit - cost).toFixed(2));
+        const nextValidDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+
+        await updateDoc(userRef, {
+          depositBalance: newDeposit,
+          validUntil: nextValidDate,
+          updatedAt: serverTimestamp()
+        });
+
+        await addDoc(collection(db, "renewRequests"), {
+          uid: currentUser.uid,
+          userName: currentUserData.name || currentUser.email,
+          loginId: currentUserData.loginId || "",
+          method: "Deposit Balance",
+          trxId: "AUTO-DEPOSIT",
+          amount: cost,
+          status: "approved",
+          createdAt: serverTimestamp()
+        });
+
+        currentUserData.depositBalance = newDeposit;
+        currentUserData.validUntil = nextValidDate;
+        updateWalletUI();
+        await loadRenewHistory(currentUser.uid);
+        showToast("Account renewed successfully via Deposit Balance!");
+      } catch (err) {
+        console.error(err);
+        showToast("Renewal failed: " + err.message);
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Manual Renew Request
+    document.getElementById("manualRenewForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      showLoader("Submitting Renew Request...");
+      try {
+        await addDoc(collection(db, "renewRequests"), {
+          uid: currentUser.uid,
+          userName: currentUserData.name || currentUser.email,
+          loginId: currentUserData.loginId || "",
+          method: document.getElementById("renewMethodInput").value.trim(),
+          trxId: document.getElementById("renewTrxInput").value.trim(),
+          amount: Number(siteSettings.depositRenewCost ?? 4.00),
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+        e.target.reset();
+        await loadRenewHistory(currentUser.uid);
+        showToast("Manual renew request submitted!");
+      } catch (err) {
+        showToast("Error: " + err.message);
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Search Gated Jobs
+    document.getElementById("searchJobBtn").addEventListener("click", async () => {
+      const term = document.getElementById("jobSearchInput").value.trim().toLowerCase();
+      const box = document.getElementById("searchResultsContainer");
+      if (!term) {
+        box.innerHTML = `<p style="font-size:13px; color:#f59e0b;">Please enter a keyword to search.</p>`;
+        return;
+      }
+      showLoader("Searching Answers...");
+      try {
+        const snap = await getDocs(collection(db, "jobs"));
+        const matches = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(j => (j.title || "").toLowerCase().includes(term) || (j.category || "").toLowerCase().includes(term));
+
+        if (matches.length === 0) {
+          box.innerHTML = `<p style="font-size:13px; color:var(--text-muted);">No matching answer found for "${escapeHtml(term)}".</p>`;
+        } else {
+          box.innerHTML = matches.map(job => `
+            <div class="list-item">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="color:#ffffff; font-size:14px;">${escapeHtml(job.title || "Untitled")}</strong>
+                <span class="badge badge-approved">${escapeHtml(job.category || "General")}</span>
+              </div>
+              <div class="answer-box">${escapeHtml(job.answer || "")}</div>
+              <div style="display:flex; gap:10px; margin-top:10px; font-size:12px; color:#94a3b8;">
+                <span><i class="fa-solid fa-thumbs-up" style="color:#10b981;"></i> ${job.likes || 0}</span>
+                <span><i class="fa-solid fa-thumbs-down" style="color:#ef4444;"></i> ${job.dislikes || 0}</span>
+              </div>
+            </div>
+          `).join("");
+        }
+      } catch (err) {
+        box.innerHTML = `<p style="color:#ef4444; font-size:13px;">Search error: ${err.message}</p>`;
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Post New Answer (Increments submittedCount & successfulAnswers by 1 per Firestore Rules)
+    document.getElementById("postJobForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      showLoader("Submitting Answer...");
+      try {
+        const newJobRef = doc(collection(db, "jobs"));
+        await setDoc(newJobRef, {
+          id: newJobRef.id,
+          title: document.getElementById("newJobTitle").value.trim(),
+          category: document.getElementById("newJobCategory").value.trim(),
+          answer: document.getElementById("newJobAnswer").value.trim(),
+          authorUID: currentUser.uid,
+          authorName: currentUserData.name || currentUser.email,
+          likes: 0,
+          dislikes: 0,
+          dislikeSuggestions: [],
+          createdAt: serverTimestamp()
+        });
+
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          submittedCount: Number(currentUserData.submittedCount || 0) + 1,
+          successfulAnswers: Number(currentUserData.successfulAnswers || 0) + 1,
+          updatedAt: serverTimestamp()
+        });
+
+        currentUserData.submittedCount = Number(currentUserData.submittedCount || 0) + 1;
+        currentUserData.successfulAnswers = Number(currentUserData.successfulAnswers || 0) + 1;
+        updateWalletUI();
+
+        e.target.reset();
+        showToast("Answer posted & balance updated!");
+        switchView("homeView");
+      } catch (err) {
+        showToast("Submit error: " + err.message);
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Support Ticket
+    document.getElementById("supportForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      showLoader("Sending Support Ticket...");
+      try {
+        await addDoc(collection(db, "supportTickets"), {
+          uid: currentUser.uid,
+          userName: currentUserData.name || currentUser.email,
+          subject: document.getElementById("supportSubject").value.trim(),
+          message: document.getElementById("supportMessage").value.trim(),
+          status: "open",
+          createdAt: serverTimestamp()
+        });
+        e.target.reset();
+        showToast("Support ticket sent!");
+      } catch (err) {
+        showToast("Error: " + err.message);
+      } finally {
+        hideLoader();
+      }
+    });
+
+    // Auth Login & Logout
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      showLoader("Signing in...");
+      try {
+        await signInWithEmailAndPassword(
+          auth,
+          document.getElementById("loginEmail").value.trim(),
+          document.getElementById("loginPassword").value
+        );
+      } catch (err) {
+        hideLoader();
+        showToast("Login failed: " + err.message);
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      showLoader("Logging out...");
+      await signOut(auth);
+    });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("appShell").style.display = "block";
+
+        // Show Admin Button in Header ONLY for specific Admin UID
+        const adminBtn = document.getElementById("adminPanelBtn");
+        adminBtn.style.display = (user.uid === ADMIN_UID) ? "inline-flex" : "none";
+
+        await loadSiteSettings();
+        await loadUserProfile(user.uid);
+        await Promise.all([
+          loadNotifications(user.uid),
+          loadRenewHistory(user.uid)
+        ]);
+        hideLoader();
+      } else {
+        currentUser = null;
+        document.getElementById("appShell").style.display = "none";
+        document.getElementById("loginSection").style.display = "flex";
+        hideLoader();
+      }
+    });
+  </script>
+</body>
+</html>

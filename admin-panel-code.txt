@@ -1,0 +1,1080 @@
+/* File: admin.html */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Answer Site</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #060913;
+      --bg-card: #0d1324;
+      --bg-card-2: #121a32;
+      --primary-blue: #2563eb;
+      --neon-blue: #38bdf8;
+      --border-color: rgba(56, 189, 248, 0.2);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    body {
+      visibility: hidden;
+      background: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 88% 92%, rgba(56, 189, 248, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(6, 9, 19, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff, var(--neon-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      padding: 8px 13px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      border-color: var(--neon-blue);
+      background: rgba(37, 99, 235, 0.18);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #0284c7);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .btn-success {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.45);
+      color: #86efac;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .btn-warning {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fde68a;
+    }
+
+    .admin-shell {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 20px 16px 64px;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 18px;
+    }
+
+    .admin-nav {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: fit-content;
+      position: sticky;
+      top: 76px;
+    }
+
+    .nav-tab {
+      width: 100%;
+      text-align: left;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+    }
+
+    .nav-tab i {
+      width: 18px;
+      color: var(--neon-blue);
+    }
+
+    .nav-tab:hover, .nav-tab.active {
+      background: rgba(37, 99, 235, 0.2);
+      border-color: var(--border-color);
+      color: #fff;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title i {
+      color: var(--neon-blue);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--neon-blue);
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 11px;
+      padding: 11px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .list-item {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .list-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+    .badge-approved { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+    .badge-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .badge-open { background: rgba(56, 189, 148, 0.2); color: #7dd3fc; }
+
+    .help-text {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Custom Popup Modal */
+    .admin-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      background: rgba(2, 6, 17, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .admin-modal-backdrop.active {
+      display: flex;
+    }
+    .admin-modal-card {
+      width: min(100%, 420px);
+      background: linear-gradient(155deg, rgba(16, 25, 48, 0.98), rgba(8, 13, 27, 0.99));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.7);
+    }
+    .admin-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .toast-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 13000;
+      background: #0f233b;
+      border: 1px solid var(--neon-blue);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      display: none;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    @media (max-width: 900px) {
+      .admin-shell {
+        grid-template-columns: 1fr;
+      }
+      .admin-nav {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .nav-tab {
+        width: auto;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="brand-box">
+      <i class="fa-solid fa-user-shield" style="color:var(--neon-blue);font-size:20px;"></i>
+      <div class="brand-title">Admin Control Panel</div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn"><i class="fa-solid fa-house"></i> Home Page</a>
+      <button type="button" class="btn btn-danger" onclick="logoutAdminAccount()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-shell">
+    <aside class="admin-nav" aria-label="Admin Sections">
+      <button type="button" class="nav-tab active" data-tab="login-history" onclick="switchAdminTab('login-history', this)">
+        <i class="fa-solid fa-clock-rotate-left"></i> Login History (48h)
+      </button>
+      <button type="button" class="nav-tab" data-tab="wallet-requests" onclick="switchAdminTab('wallet-requests', this)">
+        <i class="fa-solid fa-money-bill-transfer"></i> Deposit / Withdraw
+      </button>
+      <button type="button" class="nav-tab" data-tab="menu-sessions" onclick="switchAdminTab('menu-sessions', this)">
+        <i class="fa-solid fa-bars-staggered"></i> 3-Line Menu & Sessions
+      </button>
+      <button type="button" class="nav-tab" data-tab="form-builder" onclick="switchAdminTab('form-builder', this)">
+        <i class="fa-solid fa-wpforms"></i> Form Builder
+      </button>
+      <button type="button" class="nav-tab" data-tab="support-tickets" onclick="switchAdminTab('support-tickets', this)">
+        <i class="fa-solid fa-envelope-open-text"></i> Support Tickets
+      </button>
+      <button type="button" class="nav-tab" data-tab="wallet-config" onclick="switchAdminTab('wallet-config', this)">
+        <i class="fa-solid fa-mobile-screen-button"></i> Banking & Headline
+      </button>
+    </aside>
+
+    <main>
+      <!-- 1. LOGIN HISTORY (48h AUTO DELETE) -->
+      <section id="tab-login-history" class="tab-panel active">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Login History (Auto-Deletes After 48 Hours)</div>
+          <p class="help-text" style="margin-bottom:14px;">Entries older than 48 hours are automatically deleted from Firestore so history stays clean.</p>
+          <div id="loginHistoryList"><div class="help-text">Loading login history...</div></div>
+        </div>
+      </section>
+
+      <!-- 2. DEPOSIT / WITHDRAW REQUESTS -->
+      <section id="tab-wallet-requests" class="tab-panel">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> User Deposit & Withdraw Requests</div>
+          <p class="help-text" style="margin-bottom:14px;">Approve or reject deposit and withdraw requests submitted from the user wallet page.</p>
+          <div id="walletRequestsAdminList"><div class="help-text">Loading wallet requests...</div></div>
+        </div>
+      </section>
+
+      <!-- 3 & 6. 3-LINE MENU VISIBILITY + LOGOUT ALL / SELECTED USER -->
+      <section id="tab-menu-sessions" class="tab-panel">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-bars-staggered"></i> 3-Line Menu Section Visibility</div>
+          <p class="help-text" style="margin-bottom:14px;">Show or hide menu items in <code>index.html</code>. Hiding Withdraw / Deposit also hides the Home Page Balance & Deposit boxes.</p>
+
+          <div class="switch-row">
+            <span>My Profile</span>
+            <input type="checkbox" id="menuVisProfile" checked>
+          </div>
+          <div class="switch-row">
+            <span>Post New Answer</span>
+            <input type="checkbox" id="menuVisPostAnswer" checked>
+          </div>
+          <div class="switch-row">
+            <span>My Answer</span>
+            <input type="checkbox" id="menuVisMyAnswer" checked>
+          </div>
+          <div class="switch-row">
+            <span>Top Users</span>
+            <input type="checkbox" id="menuVisTopUsers" checked>
+          </div>
+          <div class="switch-row">
+            <span>Notifications (48h)</span>
+            <input type="checkbox" id="menuVisNotifications" checked>
+          </div>
+          <div class="switch-row">
+            <span>Withdraw / Deposit (also controls Home Balance & Deposit boxes)</span>
+            <input type="checkbox" id="menuVisWalletWd" checked>
+          </div>
+          <div class="switch-row">
+            <span>Marketplace</span>
+            <input type="checkbox" id="menuVisMarketplace" checked>
+          </div>
+          <div class="switch-row">
+            <span>Renew Your Account</span>
+            <input type="checkbox" id="menuVisRenew" checked>
+          </div>
+          <div class="switch-row">
+            <span>Help & Support Center</span>
+            <input type="checkbox" id="menuVisSupport" checked>
+          </div>
+          <div class="switch-row">
+            <span>Report Issue / Ticket</span>
+            <input type="checkbox" id="menuVisSupportTicket" checked>
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="saveMenuVisibilitySettings()">
+            <i class="fa-solid fa-floppy-disk"></i> Save 3-Line Menu Settings
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-user-slash"></i> Force Logout All Users or Selected User</div>
+          <p class="help-text" style="margin-bottom:14px;">Trigger immediate sign-out on <code>index.html</code> for a selected user or all active users.</p>
+
+          <div class="grid-2" style="margin-bottom:14px;">
+            <div class="form-group">
+              <label>Select User</label>
+              <select id="forceLogoutUserSelect" class="select">
+                <option value="">-- Choose a user --</option>
+              </select>
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;gap:8px;">
+              <button type="button" class="btn btn-warning" onclick="logoutSelectedUser()"><i class="fa-solid fa-user-xmark"></i> Logout Selected User</button>
+              <button type="button" class="btn btn-danger" onclick="logoutAllUsers()"><i class="fa-solid fa-users-slash"></i> Logout All Users</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. FULL NEW FORM BUILDER (ADD, EDIT, TYPE, LENGTH, SHOW/HIDE, OPTIONAL/MANDATORY) -->
+      <section id="tab-form-builder" class="tab-panel">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-wpforms"></i> Form Builder (Post New Answer Form)</div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Job ID Length</label>
+              <input type="number" id="fbJobIdLength" class="input" min="1" max="20" value="5">
+            </div>
+            <div class="form-group">
+              <label>Job ID Character Rule</label>
+              <select id="fbJobIdMode" class="select">
+                <option value="digits">Digits Only (0-9)</option>
+                <option value="alnum">Letters & Numbers (A-Z, 0-9)</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 style="color:var(--neon-blue);font-size:13px;margin:10px 0 8px;">Standard Form Fields</h4>
+          <div id="standardFieldsBuilderList"></div>
+
+          <h4 style="color:var(--neon-blue);font-size:13px;margin:16px 0 8px;">Custom Form Fields</h4>
+          <div id="customFieldsBuilderList"></div>
+
+          <div class="card" style="background:var(--bg-card-2);margin-top:14px;">
+            <div class="card-title" style="font-size:14px;"><i class="fa-solid fa-plus-circle"></i> <span id="fbEditorHeading">Add New Field</span></div>
+            <input type="hidden" id="fbEditIndex" value="-1">
+            <div class="grid-3">
+              <div class="form-group">
+                <label>Field Label</label>
+                <input type="text" id="fbFieldLabel" class="input" placeholder="e.g., Proof Link">
+              </div>
+              <div class="form-group">
+                <label>Field Type</label>
+                <select id="fbFieldType" class="select">
+                  <option value="text">Text</option>
+                  <option value="textarea">Textarea</option>
+                  <option value="number">Number</option>
+                  <option value="url">URL</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Max Length (Optional)</label>
+                <input type="number" id="fbFieldMaxLen" class="input" min="1" max="5000" placeholder="e.g., 120">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="switch-row">
+                <span>Show Field</span>
+                <input type="checkbox" id="fbFieldVisible" checked>
+              </div>
+              <div class="switch-row">
+                <span>Mandatory (Required)</span>
+                <input type="checkbox" id="fbFieldRequired">
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-success" onclick="saveBuilderField()"><i class="fa-solid fa-check"></i> <span id="fbSaveFieldBtnText">Add Field</span></button>
+              <button type="button" class="btn" onclick="resetBuilderFieldEditor()"><i class="fa-solid fa-rotate-left"></i> Clear Editor</button>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;">
+            <button type="button" class="btn btn-primary" onclick="saveFullFormBuilder()"><i class="fa-solid fa-cloud-arrow-up"></i> Save & Publish Form Builder</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. SUPPORT TICKETS VIEWER -->
+      <section id="tab-support-tickets" class="tab-panel">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-envelope-open-text"></i> Support Ticket Message Requests</div>
+          <p class="help-text" style="margin-bottom:14px;">Review user tickets, Telegram usernames, categories, and message details.</p>
+          <div id="supportTicketsAdminList"><div class="help-text">Loading support tickets...</div></div>
+        </div>
+      </section>
+
+      <!-- 7. MOBILE BANKING NUMBERS & SCROLLING HEADLINE FOR WITHDRAW/DEPOSIT -->
+      <section id="tab-wallet-config" class="tab-panel">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-mobile-screen-button"></i> Withdraw / Deposit Mobile Banking Numbers & Headline</div>
+
+          <div class="form-group">
+            <label>Withdraw / Deposit Scrolling Headline</label>
+            <input type="text" id="wdScrollingHeadlineInput" class="input" placeholder="Enter scrolling headline for Withdraw / Deposit section...">
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label>Bkash Number</label>
+              <input type="text" id="wdBkashNumberInput" class="input" placeholder="01XXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label>Nagad Number</label>
+              <input type="text" id="wdNagadNumberInput" class="input" placeholder="01XXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label>Rocket Number</label>
+              <input type="text" id="wdRocketNumberInput" class="input" placeholder="01XXXXXXXXX">
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="saveWalletBankingAndHeadline()">
+            <i class="fa-solid fa-floppy-disk"></i> Save Banking Numbers & Headline
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Custom Confirm / Alert Popup -->
+  <div class="admin-modal-backdrop" id="adminPopupBackdrop" role="dialog" aria-modal="true">
+    <div class="admin-modal-card">
+      <div class="card-title" id="adminPopupTitle" style="margin-bottom:8px;">Notice</div>
+      <div id="adminPopupMessage" style="font-size:13.5px;color:#cbd5e1;line-height:1.6;white-space:pre-wrap;"></div>
+      <div class="admin-modal-actions" id="adminPopupActions"></div>
+    </div>
+  </div>
+
+  <div class="toast-bar" id="adminToastBar"></div>
+
+  <script>
+    const ADMIN_UID = "DEBuc9USNcULaH9BY1tXvbRJZYn1";
+    const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+
+    let adminUsersList = [];
+    let adminStandardFields = [
+      { key: "jobName", label: "Job Name", visible: true, required: true },
+      { key: "jobId", label: "Job ID", visible: true, required: true },
+      { key: "answer", label: "Answer", visible: true, required: true },
+      { key: "image", label: "Upload Image (16:9)", visible: true, required: false },
+      { key: "youtubeLink", label: "YouTube Video Link", visible: true, required: false }
+    ];
+    let adminCustomFields = [];
+
+    function showAdminToast(msg) {
+      const el = document.getElementById("adminToastBar");
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(window.__adminToastTimer);
+      window.__adminToastTimer = setTimeout(() => { el.style.display = "none"; }, 2200);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatDateBdt(val) {
+      if (!val) return "—";
+      const d = val?.toDate ? val.toDate() : new Date(val);
+      if (Number.isNaN(d.getTime())) return String(val);
+      return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dhaka", dateStyle: "medium", timeStyle: "short", hour12: true }).format(d) + " (BDT)";
+    }
+
+    function adminAlert(message, title = "Notice") {
+      return new Promise((resolve) => {
+        const backdrop = document.getElementById("adminPopupBackdrop");
+        document.getElementById("adminPopupTitle").textContent = title;
+        document.getElementById("adminPopupMessage").textContent = String(message || "");
+        const actions = document.getElementById("adminPopupActions");
+        actions.innerHTML = `<button type="button" class="btn btn-primary" id="adminPopupOkBtn">OK</button>`;
+        const close = () => { backdrop.classList.remove("active"); resolve(); };
+        document.getElementById("adminPopupOkBtn").onclick = close;
+        backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+        backdrop.classList.add("active");
+      });
+    }
+
+    function adminConfirm(message, title = "Confirm Action") {
+      return new Promise((resolve) => {
+        const backdrop = document.getElementById("adminPopupBackdrop");
+        document.getElementById("adminPopupTitle").textContent = title;
+        document.getElementById("adminPopupMessage").textContent = String(message || "");
+        const actions = document.getElementById("adminPopupActions");
+        actions.innerHTML = `
+          <button type="button" class="btn" id="adminPopupCancelBtn">Cancel</button>
+          <button type="button" class="btn btn-primary" id="adminPopupConfirmBtn">Confirm</button>
+        `;
+        let done = false;
+        const finish = (v) => {
+          if (done) return;
+          done = true;
+          backdrop.classList.remove("active");
+          resolve(v);
+        };
+        document.getElementById("adminPopupCancelBtn").onclick = () => finish(false);
+        document.getElementById("adminPopupConfirmBtn").onclick = () => finish(true);
+        backdrop.onclick = (e) => { if (e.target === backdrop) finish(false); };
+        backdrop.classList.add("active");
+      });
+    }
+
+    function switchAdminTab(tabName, btnEl) {
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("tab-" + tabName)?.classList.add("active");
+      if (btnEl) {
+        document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+        btnEl.classList.add("active");
+      }
+    }
+
+    function renderLoginHistoryRows(rows) {
+      const box = document.getElementById("loginHistoryList");
+      if (!box) return;
+      if (!rows.length) {
+        box.innerHTML = '<div class="help-text">No login entries within the last 48 hours.</div>';
+        return;
+      }
+      box.innerHTML = rows.map(r => `
+        <div class="list-item">
+          <div class="list-top">
+            <strong>${escapeHtml(r.loginId || r.email || r.uid || "User")}</strong>
+            <span class="badge badge-approved">${escapeHtml(formatDateBdt(r.loginAt || r.createdAt))}</span>
+          </div>
+          <div class="help-text">UID: <code>${escapeHtml(r.uid || "—")}</code> · Device: ${escapeHtml(r.device || r.userAgent || "Browser")}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderWalletRequestsAdmin(rows) {
+      const box = document.getElementById("walletRequestsAdminList");
+      if (!box) return;
+      if (!rows.length) {
+        box.innerHTML = '<div class="help-text">No deposit or withdraw requests found.</div>';
+        return;
+      }
+      box.innerHTML = rows.map(r => {
+        const st = String(r.status || "pending").toLowerCase();
+        const badgeClass = st === "approved" ? "badge-approved" : (st === "rejected" ? "badge-rejected" : "badge-pending");
+        return `
+          <div class="list-item">
+            <div class="list-top">
+              <div>
+                <strong>${escapeHtml(String(r.type || "request").toUpperCase())}</strong> ·
+                <span style="color:var(--neon-blue);font-weight:700;">${escapeHtml(Number(r.amount || 0).toFixed(2))} BDT</span> ·
+                <span>${escapeHtml(r.method || "—")}</span>
+              </div>
+              <span class="badge ${badgeClass}">${escapeHtml(st)}</span>
+            </div>
+            <div class="help-text">
+              User: <strong>${escapeHtml(r.loginId || r.uid || "User")}</strong> ·
+              ${r.type === "withdraw" ? `Account: <strong>${escapeHtml(r.account || "—")}</strong>` : `Sender: <strong>${escapeHtml(r.senderMobile || "—")}</strong> · Trx ID: <strong>${escapeHtml(r.trxId || "—")}</strong>`} ·
+              Time: ${escapeHtml(formatDateBdt(r.createdAt))}
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-success" onclick="reviewWalletRequest('${escapeHtml(r.id)}', 'approved')"><i class="fa-solid fa-check"></i> Approve</button>
+              <button type="button" class="btn btn-danger" onclick="reviewWalletRequest('${escapeHtml(r.id)}', 'rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderUsersDropdown(users) {
+      adminUsersList = users || [];
+      const sel = document.getElementById("forceLogoutUserSelect");
+      if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">-- Choose a user --</option>' + adminUsersList.map(u => {
+        const label = `${u.loginId || u.name || u.uid} (${u.uid})`;
+        return `<option value="${escapeHtml(u.uid)}">${escapeHtml(label)}</option>`;
+      }).join("");
+      if (cur) sel.value = cur;
+    }
+
+    function renderFormBuilderLists() {
+      const stdBox = document.getElementById("standardFieldsBuilderList");
+      if (stdBox) {
+        stdBox.innerHTML = adminStandardFields.map((f, idx) => `
+          <div class="list-item">
+            <div class="list-top">
+              <strong>${escapeHtml(f.label)} <span class="help-text">(${escapeHtml(f.key)})</span></strong>
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <label class="help-text"><input type="checkbox" ${f.visible !== false ? "checked" : ""} onchange="toggleStandardFieldProp(${idx}, 'visible', this.checked)"> Show</label>
+                <label class="help-text"><input type="checkbox" ${f.required ? "checked" : ""} onchange="toggleStandardFieldProp(${idx}, 'required', this.checked)"> Mandatory</label>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      const custBox = document.getElementById("customFieldsBuilderList");
+      if (custBox) {
+        if (!adminCustomFields.length) {
+          custBox.innerHTML = '<div class="help-text">No custom fields added yet.</div>';
+        } else {
+          custBox.innerHTML = adminCustomFields.map((f, idx) => `
+            <div class="list-item">
+              <div class="list-top">
+                <div>
+                  <strong>${escapeHtml(f.label || "Custom Field")}</strong>
+                  <span class="help-text"> · Type: <b>${escapeHtml(f.type || "text")}</b>${f.maxLength ? ` · MaxLen: <b>${escapeHtml(f.maxLength)}</b>` : ""} · ${f.visible !== false ? "Visible" : "Hidden"} · ${f.required ? "Mandatory" : "Optional"}</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button type="button" class="btn btn-warning" onclick="startEditBuilderField(${idx})"><i class="fa-solid fa-pen"></i> Edit</button>
+                  <button type="button" class="btn btn-danger" onclick="deleteBuilderField(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+              </div>
+            </div>
+          `).join("");
+        }
+      }
+    }
+
+    function toggleStandardFieldProp(idx, prop, val) {
+      if (!adminStandardFields[idx]) return;
+      adminStandardFields[idx][prop] = Boolean(val);
+      if (prop === "visible" && !val) adminStandardFields[idx].required = false;
+    }
+
+    function startEditBuilderField(idx) {
+      const f = adminCustomFields[idx];
+      if (!f) return;
+      document.getElementById("fbEditIndex").value = String(idx);
+      document.getElementById("fbEditorHeading").textContent = "Edit Field #" + (idx + 1);
+      document.getElementById("fbSaveFieldBtnText").textContent = "Update Field";
+      document.getElementById("fbFieldLabel").value = f.label || "";
+      document.getElementById("fbFieldType").value = f.type || "text";
+      document.getElementById("fbFieldMaxLen").value = f.maxLength || "";
+      document.getElementById("fbFieldVisible").checked = f.visible !== false;
+      document.getElementById("fbFieldRequired").checked = Boolean(f.required);
+    }
+
+    function resetBuilderFieldEditor() {
+      document.getElementById("fbEditIndex").value = "-1";
+      document.getElementById("fbEditorHeading").textContent = "Add New Field";
+      document.getElementById("fbSaveFieldBtnText").textContent = "Add Field";
+      document.getElementById("fbFieldLabel").value = "";
+      document.getElementById("fbFieldType").value = "text";
+      document.getElementById("fbFieldMaxLen").value = "";
+      document.getElementById("fbFieldVisible").checked = true;
+      document.getElementById("fbFieldRequired").checked = false;
+    }
+
+    function saveBuilderField() {
+      const label = document.getElementById("fbFieldLabel").value.trim();
+      if (!label) {
+        showAdminToast("Please enter a field label.");
+        return;
+      }
+      const fieldObj = {
+        label,
+        type: document.getElementById("fbFieldType").value || "text",
+        maxLength: document.getElementById("fbFieldMaxLen").value ? Number(document.getElementById("fbFieldMaxLen").value) : null,
+        visible: document.getElementById("fbFieldVisible").checked,
+        required: document.getElementById("fbFieldRequired").checked
+      };
+      const editIdx = Number(document.getElementById("fbEditIndex").value);
+      if (editIdx >= 0 && adminCustomFields[editIdx]) {
+        adminCustomFields[editIdx] = fieldObj;
+        showAdminToast("Field updated in builder.");
+      } else {
+        adminCustomFields.push(fieldObj);
+        showAdminToast("New field added to builder.");
+      }
+      resetBuilderFieldEditor();
+      renderFormBuilderLists();
+    }
+
+    async function deleteBuilderField(idx) {
+      if (!await adminConfirm("Delete this custom field?", "Delete Field")) return;
+      adminCustomFields.splice(idx, 1);
+      renderFormBuilderLists();
+      showAdminToast("Field removed.");
+    }
+
+    function renderSupportTicketsAdmin(rows) {
+      const box = document.getElementById("supportTicketsAdminList");
+      if (!box) return;
+      if (!rows.length) {
+        box.innerHTML = '<div class="help-text">No support tickets submitted yet.</div>';
+        return;
+      }
+      box.innerHTML = rows.map(t => `
+        <div class="list-item">
+          <div class="list-top">
+            <strong>${escapeHtml(t.subject || "Support Request")}</strong>
+            <span class="badge badge-open">${escapeHtml(t.status || "open")}</span>
+          </div>
+          <div class="help-text" style="margin-bottom:8px;">
+            User: <strong>${escapeHtml(t.loginId || t.userName || t.uid || "User")}</strong> ·
+            Telegram: <strong>${escapeHtml(t.telegramUsername ? "@" + t.telegramUsername : "Not provided")}</strong> ·
+            Category: <strong>${escapeHtml(t.category || "General")}</strong> ·
+            Time: ${escapeHtml(formatDateBdt(t.createdAt || t.clientCreatedAt))}
+          </div>
+          <div style="font-size:13px;color:#e2e8f0;white-space:pre-wrap;background:rgba(13,19,36,0.8);padding:10px;border-radius:9px;border:1px solid var(--border-color);">${escapeHtml(t.message || "")}</div>
+        </div>
+      `).join("");
+    }
+
+    function applyLoadedSettingsToInputs(homeData = {}, jobFormData = {}) {
+      const vis = homeData.menuVisibility || {};
+      document.getElementById("menuVisProfile").checked = vis.profile !== false;
+      document.getElementById("menuVisPostAnswer").checked = vis["post-answer"] !== false;
+      document.getElementById("menuVisMyAnswer").checked = vis["my-answer"] !== false;
+      document.getElementById("menuVisTopUsers").checked = vis["top-users"] !== false;
+      document.getElementById("menuVisNotifications").checked = vis.notifications !== false;
+      const walletAllowed = (vis["wallet-wd"] !== false) && (homeData.showWalletSection !== false);
+      document.getElementById("menuVisWalletWd").checked = walletAllowed;
+      document.getElementById("menuVisMarketplace").checked = vis.marketplace !== false;
+      document.getElementById("menuVisRenew").checked = vis.renew !== false;
+      document.getElementById("menuVisSupport").checked = vis.support !== false;
+      document.getElementById("menuVisSupportTicket").checked = vis["support-ticket"] !== false;
+
+      document.getElementById("wdScrollingHeadlineInput").value = homeData.walletHeadline || homeData.renewHeadline || "";
+      document.getElementById("wdBkashNumberInput").value = homeData.bkashNumber || "";
+      document.getElementById("wdNagadNumberInput").value = homeData.nagadNumber || "";
+      document.getElementById("wdRocketNumberInput").value = homeData.rocketNumber || "";
+
+      if (jobFormData.jobIdLength) document.getElementById("fbJobIdLength").value = Number(jobFormData.jobIdLength);
+      if (jobFormData.jobIdDigitsOnly !== undefined) {
+        document.getElementById("fbJobIdMode").value = jobFormData.jobIdDigitsOnly === false ? "alnum" : "digits";
+      }
+      if (Array.isArray(jobFormData.standardFields) && jobFormData.standardFields.length) {
+        adminStandardFields = jobFormData.standardFields;
+      }
+      if (Array.isArray(jobFormData.fields)) {
+        adminCustomFields = jobFormData.fields;
+      }
+      renderFormBuilderLists();
+    }
+  </script>
+
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+    import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || user.uid !== ADMIN_UID) {
+        window.location.replace("login.html");
+        return;
+      }
+      document.body.style.visibility = "visible";
+
+      const homeRef = doc(db, "siteSettings", "home");
+      const jobFormRef = doc(db, "siteSettings", "jobForm");
+
+      let currentHome = {};
+      let currentJobForm = {};
+
+      const [homeSnap, jobFormSnap] = await Promise.all([getDoc(homeRef), getDoc(jobFormRef)]);
+      if (homeSnap.exists()) currentHome = homeSnap.data() || {};
+      if (jobFormSnap.exists()) currentJobForm = jobFormSnap.data() || {};
+      applyLoadedSettingsToInputs(currentHome, currentJobForm);
+
+      onSnapshot(homeRef, (snap) => {
+        currentHome = snap.exists() ? (snap.data() || {}) : {};
+        applyLoadedSettingsToInputs(currentHome, currentJobForm);
+      });
+
+      // 1. Login history with 48-hour automatic deletion
+      onSnapshot(collection(db, "loginHistory"), (snap) => {
+        const nowMs = Date.now();
+        const activeRows = [];
+        for (const d of snap.docs) {
+          const data = d.data() || {};
+          const rawTime = data.loginAt || data.createdAt || data.timestamp || "";
+          const ts = rawTime?.toMillis ? rawTime.toMillis() : (Date.parse(rawTime) || nowMs);
+          if (nowMs - ts > FORTY_EIGHT_HOURS_MS) {
+            deleteDoc(doc(db, "loginHistory", d.id)).catch(() => {});
+            continue;
+          }
+          activeRows.push({ id: d.id, ...data, _ts: ts });
+        }
+        activeRows.sort((a, b) => b._ts - a._ts);
+        renderLoginHistoryRows(activeRows);
+      });
+
+      // 2. Deposit / Withdraw requests
+      onSnapshot(collection(db, "walletTransactions"), (snap) => {
+        const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+        renderWalletRequestsAdmin(rows);
+      });
+
+      window.reviewWalletRequest = async (reqId, nextStatus) => {
+        if (!await adminConfirm(`Mark this request as ${nextStatus.toUpperCase()}?`, "Review Wallet Request")) return;
+        await updateDoc(doc(db, "walletTransactions", reqId), {
+          status: nextStatus,
+          reviewedAt: new Date().toISOString(),
+          reviewedBy: ADMIN_UID
+        });
+        showAdminToast(`Request marked ${nextStatus}.`);
+      };
+
+      // 3 & 6. Menu visibility + Logout selected / all users
+      onSnapshot(collection(db, "users"), (snap) => {
+        const users = snap.docs.map(d => ({ uid: d.id, ...(d.data() || {}) }));
+        renderUsersDropdown(users);
+      });
+
+      window.saveMenuVisibilitySettings = async () => {
+        const walletVisible = document.getElementById("menuVisWalletWd").checked;
+        const menuVisibility = {
+          profile: document.getElementById("menuVisProfile").checked,
+          "post-answer": document.getElementById("menuVisPostAnswer").checked,
+          "my-answer": document.getElementById("menuVisMyAnswer").checked,
+          "top-users": document.getElementById("menuVisTopUsers").checked,
+          notifications: document.getElementById("menuVisNotifications").checked,
+          "wallet-wd": walletVisible,
+          marketplace: document.getElementById("menuVisMarketplace").checked,
+          renew: document.getElementById("menuVisRenew").checked,
+          support: document.getElementById("menuVisSupport").checked,
+          "support-ticket": document.getElementById("menuVisSupportTicket").checked
+        };
+        await setDoc(homeRef, {
+          menuVisibility,
+          showWalletSection: walletVisible,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        showAdminToast("3-line menu visibility saved.");
+      };
+
+      window.logoutSelectedUser = async () => {
+        const targetUid = document.getElementById("forceLogoutUserSelect").value;
+        if (!targetUid) {
+          showAdminToast("Please select a user first.");
+          return;
+        }
+        if (!await adminConfirm("Force logout the selected user immediately?", "Logout Selected User")) return;
+        await updateDoc(doc(db, "users", targetUid), {
+          forceLogout: true,
+          forceLogoutAt: Date.now()
+        });
+        showAdminToast("Selected user logged out.");
+      };
+
+      window.logoutAllUsers = async () => {
+        if (!await adminConfirm("Force logout ALL users immediately?", "Logout All Users")) return;
+        await setDoc(homeRef, {
+          forceLogoutAllAt: Date.now()
+        }, { merge: true });
+        showAdminToast("Logout signal sent to all users.");
+      };
+
+      // 4. Save Form Builder
+      window.saveFullFormBuilder = async () => {
+        const jobIdLength = Math.max(1, Math.min(20, Number(document.getElementById("fbJobIdLength").value || 5)));
+        const jobIdDigitsOnly = document.getElementById("fbJobIdMode").value !== "alnum";
+        await setDoc(jobFormRef, {
+          jobIdLength,
+          jobIdDigitsOnly,
+          standardFields: adminStandardFields,
+          fields: adminCustomFields,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        showAdminToast("Form Builder saved.");
+      };
+
+      // 5. Support tickets
+      onSnapshot(query(collection(db, "supportTickets"), orderBy("createdAt", "desc")), (snap) => {
+        const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderSupportTicketsAdmin(rows);
+      }, () => {
+        onSnapshot(collection(db, "supportTickets"), (snap) => {
+          const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderSupportTicketsAdmin(rows);
+        });
+      });
+
+      // 7. Save mobile banking numbers & scrolling headline
+      window.saveWalletBankingAndHeadline = async () => {
+        const walletHeadline = document.getElementById("wdScrollingHeadlineInput").value.trim();
+        const bkashNumber = document.getElementById("wdBkashNumberInput").value.trim();
+        const nagadNumber = document.getElementById("wdNagadNumberInput").value.trim();
+        const rocketNumber = document.getElementById("wdRocketNumberInput").value.trim();
+        await setDoc(homeRef, {
+          walletHeadline,
+          bkashNumber,
+          nagadNumber,
+          rocketNumber,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        showAdminToast("Mobile banking numbers & headline saved.");
+      };
+
+      window.logoutAdminAccount = async () => {
+        await signOut(auth);
+        window.location.replace("login.html");
+      };
+    });
+  </script>
+</body>
+</html>

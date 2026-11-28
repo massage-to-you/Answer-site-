@@ -878,18 +878,19 @@ $("saveProfileBtn").addEventListener("click",async()=>{
  }
  const [submitted,deleted,fail]=nums,success=Math.max(0,submitted-fail),rate=submitted?Number((success/submitted*100).toFixed(2)):0;
  try{
-  await updateDoc(doc(db,"users",selectedUserId),{
-   name,
-   validUntil,
-   depositBalance:Number(depositVal.toFixed(2)),
-   balanceOverride:overrideVal===null?null:Number(overrideVal.toFixed(2)),
-   submittedCount:submitted,
-   deletedCount:deleted,
-   successfulAnswers:success,
-   unsuccessfulAnswers:fail,
-   successRate:rate,
-   updatedAt:new Date().toISOString()
-  });
+  await updateDoc(doc(db, "users", selectedUserId), {
+  name,
+  validUntil,
+  depositBalance: Number(depositVal.toFixed(2)),
+  balance: Number(syncedBal.toFixed(2)),
+  balanceOverride: overrideVal === null ? null : Number(overrideVal.toFixed(2)),
+  submittedCount: submitted,
+  deletedCount: deleted,
+  successfulAnswers: success,
+  unsuccessfulAnswers: fail,
+  successRate: rate,
+  updatedAt: new Date().toISOString()
+});
   await logAction("Updated user profile & wallet",`${loginOf(users.find(u=>u.id===selectedUserId))} | Deposit: ${depositVal.toFixed(2)}`);
   await loadUsers();
   openProfile(selectedUserId);

@@ -1832,7 +1832,8 @@ async function loadSettings(){
 }
 
 $("saveSettingsBtn").addEventListener("click",async()=>{
- const supportContacts=$("supportContactsText").value.split(/?
+ const supportContacts=$("supportContactsText").value.split(/
+?
 /).map(line=>line.split("|").map(x=>x.trim())).filter(parts=>parts[1]).map(parts=>({label:parts[0]||"Support",url:parts[1],description:parts[2]||"",visible:true}));
  const rewardVal=Math.max(0,Number($("rewardPerSuccess").value)||0);
  const deductVal=Math.max(0,Number($("deductionPerFail").value)||0);

@@ -2247,23 +2247,24 @@
     }
 
     function getCurrentBalanceAmount() {
-      const u = authenticatedUserData || {};
-      if (u.balance !== undefined && u.balance !== null && u.balance !== '') {
-        const b = Number(u.balance);
-        if (Number.isFinite(b)) return Math.max(0, b);
-      }
-      if (u.balanceOverride !== undefined && u.balanceOverride !== null && u.balanceOverride !== '') {
-        const ov = Number(u.balanceOverride);
-        if (Number.isFinite(ov)) return Math.max(0, ov);
-      }
-      const submitted = Number(u.submittedCount || 0);
-      const fail = Math.min(submitted, Number(u.unsuccessfulAnswers || (Array.isArray(u.unsuccessfulJobIds) ? u.unsuccessfulJobIds.length : 0)));
-      const successful = Math.max(0, submitted - fail);
-      const rewardRate = getJobRewardRate();
-      const failRate = Number(homeAdminSettings.deductionPerFail ?? 0) || 0;
-      const withdrawnTotal = Number(u.withdrawnTotal || 0);
-      return Math.max(0, ((successful * rewardRate) - (fail * failRate)) - withdrawnTotal);
+  const u = authenticatedUserData || {};
+  if (u.balanceOverride !== undefined && u.balanceOverride !== null && u.balanceOverride !== '') {
+    const ov = Number(u.balanceOverride);
+    if (Number.isFinite(ov)) return Math.max(0, ov);
+  }
+  if (u.balance !== undefined && u.balance !== null && u.balance !== '') {
+    const b = Number(u.balance);
+    if (Number.isFinite(b)) return Math.max(0, b);
+  }
+  const submitted = Number(u.submittedCount || 0);
+  const fail = Math.min(submitted, Number(u.unsuccessfulAnswers || (Array.isArray(u.unsuccessfulJobIds) ? u.unsuccessfulJobIds.length : 0)));
+  const successful = Math.max(0, submitted - fail);
+  const rewardRate = getJobRewardRate();
+  const failRate = Number(homeAdminSettings.deductionPerFail ?? 0) || 0;
+  const withdrawnTotal = Number(u.withdrawnTotal || 0);
+  return Math.max(0, ((successful * rewardRate) - (fail * failRate)) - withdrawnTotal);
     }
+    
 
     function getCurrentDepositAmount() {
       const dep = Number(authenticatedUserData?.depositBalance ?? 0);

@@ -1066,28 +1066,37 @@ $("dwBody").addEventListener("click",async e=>{
   const rType=String(reqItem.type||reqItem.requestType||"deposit").toLowerCase();
   const amt=Number(reqItem.amount||0);
   if(nextStatus==="approved" && prevStatus!=="approved" && reqItem.uid && amt>0){
-   const uRef=doc(db,"users",String(reqItem.uid));
-   const uSnap=await getDoc(uRef);
-   if(uSnap.exists()){
-    const uData=uSnap.data()||{};
-    const curDep=Number(uData.depositBalance||0);
-    if(rType==="deposit"){
-     await updateDoc(uRef,{depositBalance:Number((curDep+amt).toFixed(2)),updatedAt:new Date().toISOString()});
-    }else if(rType==="withdraw"){
-     if(curDep>=amt){
-      await updateDoc(uRef,{depositBalance:Number((curDep-amt).toFixed(2)),updatedAt:new Date().toISOString()});
-     }else{
-      const curOverride=Number(uData.balanceOverride ?? calcBalanceOf(uData));
-      if(curOverride<amt){
-       toast("User does not have enough balance to approve this withdrawal.");
-       return;
-      }
-      await updateDoc(uRef,{balanceOverride:Number((curOverride-amt).toFixed(2)),updatedAt:new Date().toISOString()});
-     }
+   const prevStatus = String(reqItem.status || "pending").toLowerCase();
+const rType = String(reqItem.type || reqItem.requestType || "deposit").toLowerCase();
+const amt = Number(reqItem.amount || 0);
+
+if (reqItem.uid && amt > 0) {
+  const uRef = doc(db, "users", String(reqItem.uid));
+  const uSnap = await getDoc(uRef);
+  if (uSnap.exists()) {
+    const uData = uSnap.data() || {};
+    const curDep = Number(uData.depositBalance || 0);
+    const curBal = Number(uData.balanceOverride ?? uData.balance ?? calcBalanceOf(uData));
+
+    if (rType === "deposit" && nextStatus === "approved" && prevStatus !== "approved") {
+      await updateDoc(uRef, {
+        depositBalance: Number((curDep + amt).toFixed(2)),
+        updatedAt: new Date().toISOString()
+      });
+    } else if (rType === "withdraw" && nextStatus === "rejected" && prevStatus === "pending") {
+      // ইউজার রিকোয়েস্ট করার সময়ই ব্যালেন্স কাটা হয়েছিল, তাই রিজেক্ট করলে ব্যালেন্স ফেরত দেওয়া হচ্ছে
+      const refundedBal = Number((curBal + amt).toFixed(2));
+      await updateDoc(uRef, {
+        balance: refundedBal,
+        balanceOverride: refundedBal,
+        withdrawnTotal: Math.max(0, Number((Number(uData.withdrawnTotal || 0) - amt).toFixed(2))),
+        updatedAt: new Date().toISOString()
+      });
     }
     await loadUsers();
-   }
   }
+}
+   
   await updateDoc(doc(db,"depositWithdrawRequests",id),{status:nextStatus,reviewedAt:new Date().toISOString(),reviewedBy:ADMIN_UID});
   await logAction(`Marked ${rType} request ${nextStatus}`,`${id} (${amt})`);
   await loadDwRequests();

@@ -1155,22 +1155,41 @@ function selectTicket(id){
  $("ticketReplyEditor").classList.remove("hidden");
 }
 $("ticketsList").addEventListener("click",e=>{const card=e.target.closest("[data-open-ticket]");if(card)selectTicket(card.dataset.openTicket)});
-$("saveTicketReplyBtn").addEventListener("click",async()=>{
- if(!selectedTicketId)return;
- const replyText=$("ticketAdminReply").value.trim();
- const nextStatus=$("ticketEditStatus").value;
- try{
-  await updateDoc(doc(db,"supportTickets",selectedTicketId),{
-   adminReply:replyText,
-   status:nextStatus,
-   repliedAt:replyText?new Date().toISOString():(supportTickets.find(x=>x.id===selectedTicketId)?.repliedAt||""),
-   updatedAt:new Date().toISOString()
-  });
-  await logAction("Updated support ticket",`${selectedTicketId} -> ${nextStatus}`);
-  await loadSupportTickets();
-  toast("Ticket reply & status saved.");
- }catch(e){toast("Save failed: "+(e.code||e.message))}
+$("saveTicketReplyBtn").addEventListener("click", async () => {
+  if (!selectedTicketId) return;
+  const replyText = $("ticketAdminReply").value.trim();
+  const nextStatus = $("ticketEditStatus").value;
+  const ticketObj = supportTickets.find(x => x.id === selectedTicketId);
+  try {
+    await updateDoc(doc(db, "supportTickets", selectedTicketId), {
+      adminReply: replyText,
+      status: nextStatus,
+      repliedAt: replyText ? new Date().toISOString() : (ticketObj?.repliedAt || ""),
+      updatedAt: new Date().toISOString()
+    });
+    if (replyText && ticketObj?.uid) {
+      const nowMs = Date.now();
+      const expiresAtDate = new Date(nowMs + FORTY_EIGHT_HOURS_MS);
+      await addDoc(collection(db, "notifications"), {
+        title: `Support Ticket Reply: ${ticketObj.subject || "Ticket"}`,
+        message: replyText,
+        targetUid: String(ticketObj.uid),
+        ticketId: selectedTicketId,
+        createdAt: Timestamp.fromDate(new Date(nowMs)),
+        expiresAt: Timestamp.fromDate(expiresAtDate),
+        clientCreatedAt: new Date(nowMs).toISOString(),
+        clientExpiresAt: expiresAtDate.toISOString(),
+        createdBy: ADMIN_UID
+      });
+    }
+    await logAction("Updated support ticket", `${selectedTicketId} -> ${nextStatus}`);
+    await loadSupportTickets();
+    toast("Ticket reply & status saved.");
+  } catch (e) {
+    toast("Save failed: " + (e.code || e.message));
+  }
 });
+ 
 $("deleteCurrentTicketBtn").addEventListener("click",async()=>{
  if(!selectedTicketId)return;
  if(!await websiteConfirm("Delete this support ticket permanently?","Delete Ticket"))return;

@@ -3758,39 +3758,40 @@
     }
 
     function startUserProfileListener(uid) {
-      if (typeof userDocUnsubscribe === "function") userDocUnsubscribe();
-      if (!uid) return;
-      userDocUnsubscribe = onSnapshot(doc(db, "users", uid), snap => {
-        if (!snap.exists()) return;
-        if (Date.now() - lastWalletWriteAt < 1800) return;
-        const userData = snap.data() || {};
-        authenticatedUserData = { ...authenticatedUserData, ...userData };
-        if (userData.loginId) {
-          currentUserLoginId = userData.loginId;
-          authenticatedLoginId = userData.loginId;
-          siteConfig.userUID = `UID: ${userData.loginId}`;
-          save24hSessionCache(uid, userData.loginId);
-        }
-        if (userData.validUntil) {
-          siteConfig.validityDate = userData.validUntil;
-        }
-        userProfile = {
-          ...userProfile,
-          name: userData.name ?? userProfile.name ?? "",
-          age: userData.age ?? userProfile.age ?? "",
-          nationality: userData.nationality ?? userProfile.nationality ?? "",
-          telegramUsername: userData.telegramUsername ?? userProfile.telegramUsername ?? ""
-        };
-        try { localStorage.setItem("answerSiteUserProfile", JSON.stringify(userProfile)); } catch (_) {}
-        applySiteConfig();
-        syncProfileFormValues();
-        renderProfileSuccessRate();
-        renderWalletAndAdminVisibility();
-        enforceAccountValidityGate();
-      }, err => {
-        console.warn("User doc listener error:", err);
-      });
+  if (typeof userDocUnsubscribe === "function") userDocUnsubscribe();
+  if (!uid) return;
+  userDocUnsubscribe = onSnapshot(doc(db, "users", uid), snap => {
+    if (!snap.exists()) return;
+    if (Date.now() - lastWalletWriteAt < 1200) return;
+    const userData = snap.data() || {};
+    authenticatedUserData = { ...authenticatedUserData, ...userData };
+    if (userData.loginId) {
+      currentUserLoginId = userData.loginId;
+      authenticatedLoginId = userData.loginId;
+      siteConfig.userUID = `UID: ${userData.loginId}`;
+      save24hSessionCache(uid, userData.loginId);
     }
+    if (userData.validUntil) {
+      siteConfig.validityDate = userData.validUntil;
+    }
+    userProfile = {
+      ...userProfile,
+      name: userData.name ?? userProfile.name ?? "",
+      age: userData.age ?? userProfile.age ?? "",
+      nationality: userData.nationality ?? userProfile.nationality ?? "",
+      telegramUsername: userData.telegramUsername ?? userProfile.telegramUsername ?? ""
+    };
+    try { localStorage.setItem("answerSiteUserProfile", JSON.stringify(userProfile)); } catch (_) {}
+    applySiteConfig();
+    syncProfileFormValues();
+    renderProfileSuccessRate();
+    renderWalletAndAdminVisibility();
+    enforceAccountValidityGate();
+  }, err => {
+    console.warn("User doc listener error:", err);
+  });
+    }
+    
 
     function startHomeSettingsListener() {
       if (typeof homeSettingsUnsubscribe === "function") homeSettingsUnsubscribe();
